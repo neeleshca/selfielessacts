@@ -1,11 +1,22 @@
 <!DOCTYPE=html>
 <html>
 <head>
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css')}}">
+
     <title>
         Store Report
     </title>
 </head>
 <body>
+	<div class="topnav" id="myTopnav">
+		  <a href="{{ url_for('animals')}}" class="active">Animals</a>
+		  <a href="{{ url_for('humans')}}">Humans</a>
+		  <a href="{{ url_for('nature')}}">Nature</a>
+		  <a href="{{ url_for('other')}}">Other</a>
+		  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+		    <i class="fa fa-bars"></i>
+		  </a>
+	</div>
     
     {% for image in images %}
     <img src = "{{url_for('static', filename=image)}}">

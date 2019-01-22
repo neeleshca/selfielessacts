@@ -14,11 +14,22 @@ def images():
     images = ['Categories/Category_0/' + file for file in images]
     print(images)
     return render_template('images.html',images=images)
-    
 
+@app.route("/animals")
+def animals():
+    return render_template('category.html',info="animals")
 
+@app.route("/humans")
+def humans():
+    return render_template('category.html',info="humans")
 
+@app.route("/nature")
+def nature():
+    return render_template('category.html',info="nature")
 
+@app.route("/other")
+def other():
+    return render_template('category.html',info="other")
 
 if __name__ == "__main__":
     app.run()
