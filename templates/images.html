@@ -1,0 +1,17 @@
+<!DOCTYPE=html>
+<html>
+<head>
+    <title>
+        Store Report
+    </title>
+</head>
+<body>
+    
+    {% for image in images %}
+    <img src = "{{url_for('static', filename=image)}}">
+
+    
+    {% endfor %}
+    <!-- <img src = "{{url_for('static', filename='Categories/Category_0/BEwrVP6o0yQ.jpg')}}"> -->
+</body>
+</html>`
