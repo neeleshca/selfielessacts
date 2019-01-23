@@ -15,3 +15,7 @@ $(".gallery ul li a").click(function() {
         scrollTop: parseInt($("#top").offset().top)
     }, 400);
 });
+
+$('.button button_secondary').click(function(){
+    $('.likesCounter').val( parseInt($('.likesCounter').val()) + 1 ); 
+});
