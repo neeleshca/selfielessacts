@@ -16,10 +16,10 @@
 
 		{{info}}
 		<a href="{{ url_for('images')}}">Home</a>
-		<a href="{{ url_for('animals')}}">Animals</a>
-		<a href="{{ url_for('humans')}}">Humans</a>
-		<a href="{{ url_for('nature')}}">Nature</a>
-		<a href="{{ url_for('other')}}">Other</a>
+		<a href="{{url_for('category_fun', category='animals')}}">Animals</a>
+		<a href="{{url_for('category_fun', category='humans')}}">Humans</a>
+		<a href="{{url_for('category_fun', category='nature')}}">Nature</a>
+		<a href="{{url_for('category_fun', category='other')}}">Other</a>
 		<a href="javascript:void(0);" class="icon" onclick="myFunction()">
 			<i class="fa fa-bars"></i>
 		</a>
