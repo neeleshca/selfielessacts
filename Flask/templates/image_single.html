@@ -3,24 +3,20 @@
 
 <head>
     <title>
-        All Categories
+        Single Image Display
     </title>
 </head>
 <body>
 
     <div class="topnav" id="myTopnav">
-
         <a href="{{ url_for('images')}}">Home</a>
         <a href="{{url_for('category_fun', category='animals')}}">Animals</a>
         <a href="{{url_for('category_fun', category='humans')}}">Humans</a>
         <a href="{{url_for('category_fun', category='nature')}}">Nature</a>
         <a href="{{url_for('category_fun', category='other')}}">Other</a>
-    
     </div>
 
-    {% for image in images %}
     <a href="{{url_for('show_user_profile',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
-    {% endfor %}
 
 </body>
 </html>`

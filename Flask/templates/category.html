@@ -20,9 +20,7 @@
 		<a href="{{url_for('category_fun', category='humans')}}">Humans</a>
 		<a href="{{url_for('category_fun', category='nature')}}">Nature</a>
 		<a href="{{url_for('category_fun', category='other')}}">Other</a>
-		<a href="javascript:void(0);" class="icon" onclick="myFunction()">
-			<i class="fa fa-bars"></i>
-		</a>
+		
 	</div>
 	<h1>
 		{{info}}
@@ -42,7 +40,7 @@
 				<a href="#" class="close"></a>
 				{% for image in images %}
 				<li>
-					<a href="#item02">
+					<a href="{{url_for('show_user_profile',thepath = image)}}">
 						<img src="{{url_for('static', filename=image)}}" alt="">
 					</a>
 				</li>

@@ -20,9 +20,13 @@ def images():
 
 
 
-@app.route("/user/<username>")
-def show_user_profile(username):
-    return "User %s" % username
+# @app.route("/user/")
+@app.route("/user/<path:thepath>")
+def show_user_profile(thepath):
+    # print("Username is ",thepath)
+    # print("Split is ",thepath.split('/'))
+    return render_template("image_single.html",image = thepath)
+    # return "User %s" % thepath
 
 @app.route("/<category>")
 def category_fun(category):
