@@ -16,6 +16,6 @@ $(".gallery ul li a").click(function() {
     }, 400);
 });
 
-$('.button button_secondary').click(function(){
+$('.buttonincr').click(function(){
     $('.likesCounter').val( parseInt($('.likesCounter').val()) + 1 ); 
 });
