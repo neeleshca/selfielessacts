@@ -12,31 +12,19 @@
 </head>
 
 <body>
-	<div class="topnav" id="myTopnav">
 
-		{{info}}
-		<a href="{{ url_for('images')}}">Home</a>
-		<a href="{{url_for('category_fun', category='animals')}}">Animals</a>
-		<a href="{{url_for('category_fun', category='humans')}}">Humans</a>
-		<a href="{{url_for('category_fun', category='nature')}}">Nature</a>
-		<a href="{{url_for('category_fun', category='other')}}">Other</a>
-		
+	<div class="topnav" id="myTopnav">
+		{% include 'nav_bar.html' %}
 	</div>
+
 	<h1>
 		{{info}}
 	</h1>
-
-	<!-- {% for image in images %}
-	<img src="{{url_for('static', filename=image)}}">
-	{% endfor %} -->
-
 
 	<div id="top"></div>
 	<section class="gallery">
 		<div class="row">
 			<ul>
-
-
 				<a href="#" class="close"></a>
 				{% for image in images %}
 				<li>
@@ -45,8 +33,6 @@
 					</a>
 				</li>
 				{% endfor %}
-
-				
 			</ul>
 		</div>
 	</section>

@@ -23,6 +23,11 @@ def images():
     images = sorted_images("Category_0")
     return render_template("images.html", images=images)
 
+@app.route("/upload")
+def upload_page():
+    return render_template("upload_page.html")
+
+
 
 # @app.route("/user/")
 @app.route("/<path:thepath>")

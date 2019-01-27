@@ -6,16 +6,11 @@
         All Categories
     </title>
 </head>
+
 <body>
 
     <div class="topnav" id="myTopnav">
-
-        <a href="{{ url_for('images')}}">Home</a>
-        <a href="{{url_for('category_fun', category='animals')}}">Animals</a>
-        <a href="{{url_for('category_fun', category='humans')}}">Humans</a>
-        <a href="{{url_for('category_fun', category='nature')}}">Nature</a>
-        <a href="{{url_for('category_fun', category='other')}}">Other</a>
-    
+        {% include 'nav_bar.html' %}
     </div>
 
     {% for image in images %}
@@ -23,4 +18,5 @@
     {% endfor %}
 
 </body>
+
 </html>`
