@@ -13,6 +13,20 @@
         {% include 'nav_bar.html' %}
     </div>
     <h1>Upload Page</h1>
+    <form id = "upload_form" action = "{{url_for('submitted')}}" method="POST" enctype="multipart/form-data">
+        Choose Image to upload
+        <input type="file" name="file"  accept="image/*">
+        <br>
+        Category:
+        <br>
+        <input type="radio" name="cat" value="animals"> Animals<br>
+        <input type="radio" name="cat" value="humans"> Humans<br>
+        <input type="radio" name="cat" value="nature"> Nature <br>
+        <input type="radio" name="cat" value="other"> Other <br>  
+        Enter Caption
+        <input type="text" name = "capt"> <br>      
+        <input type="submit" value="Upload">
+    </form>
 
 </body>
 

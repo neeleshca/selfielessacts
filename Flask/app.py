@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, redirect
 from inspect import getsourcefile
 import os
 from os.path import abspath
@@ -6,7 +6,6 @@ import random
 
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
-
 
 def sorted_images(category):
     #Sorts images in reverse chronological order of modified time
@@ -23,6 +22,17 @@ def sorted_images(category):
 def images():
     images = sorted_images("Category_0")
     return render_template("images.html", images=images)
+
+@app.route("/submitted", methods = ['POST'])
+def submitted():
+    category = request.form.get("cat")
+    file = request.files["file"]
+    capt = request.form.get("capt")
+    print("category: ", category)
+    print("caption: ", capt)
+    target = os.path.join(PATH, "static", "Categories", category, capt)
+    file.save(target)   
+    return redirect("/")
 
 @app.route("/upload")
 def upload_page():
