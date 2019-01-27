@@ -11,7 +11,8 @@
     <div class="topnav" id="myTopnav">
         {% include 'nav_bar.html' %}
     </div>
-    <a href="{{url_for('show_user_profile',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
+    <h1>{{caption}}</h1>
+    <a href="{{url_for('show_single_image',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
 </body>
 
 </html>`

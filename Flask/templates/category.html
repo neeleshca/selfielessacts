@@ -28,7 +28,7 @@
 				<a href="#" class="close"></a>
 				{% for image in images %}
 				<li>
-					<a href="{{url_for('show_user_profile',thepath = image)}}">
+					<a href="{{url_for('show_single_image',thepath = image)}}">
 						<img src="{{url_for('static', filename=image)}}" alt="">
 					</a>
 				</li>

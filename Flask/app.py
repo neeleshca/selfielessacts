@@ -2,13 +2,14 @@ from flask import Flask, render_template, url_for
 from inspect import getsourcefile
 import os
 from os.path import abspath
-
+import random
 
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
 
 def sorted_images(category):
+    #Sorts images in reverse chronological order of modified time
     images = os.listdir(PATH + "/static/Categories/" + category)
     images = ["Categories/" + category + "/" + file for file in images]
     images_time = [os.path.getmtime(PATH + "/static/" + file) for file in images]
@@ -31,8 +32,11 @@ def upload_page():
 
 # @app.route("/user/")
 @app.route("/<path:thepath>")
-def show_user_profile(thepath):
-    return render_template("image_single.html", image=thepath)
+def show_single_image(thepath):
+    temp = thepath.rsplit('/')[-1]
+    caption = temp.rsplit('.')[0]
+    # print(thepath)
+    return render_template("image_single.html", image=thepath, caption = caption)
 
 
 

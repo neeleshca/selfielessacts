@@ -14,7 +14,7 @@
     </div>
 
     {% for image in images %}
-    <a href="{{url_for('show_user_profile',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
+    <a href="{{url_for('show_single_image',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
     {% endfor %}
 
 </body>
