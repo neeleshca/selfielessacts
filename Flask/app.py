@@ -9,9 +9,12 @@ PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
 def sorted_images(category):
     #Sorts images in reverse chronological order of modified time
-    images = os.listdir(PATH + "/static/Categories/" + category)
-    images = ["Categories/" + category + "/" + file for file in images]
-    images_time = [os.path.getmtime(PATH + "/static/" + file) for file in images]
+
+    #Lists all the images
+    images = os.listdir(os.path.join(PATH, "static", "Categories", category))
+    #Gives the filename which can be used by flask (From static folder)
+    images = [os.path.join("Categories",category,file) for file in images]
+    images_time = [os.path.getmtime(os.path.join(PATH, "static", file)) for file in images]
     sort_list = [list(a) for a in zip(images, images_time)]
     sort_list = sorted(sort_list, reverse=True, key=lambda x: x[1])
     images = [i[0] for i in sort_list]
@@ -25,12 +28,12 @@ def images():
 
 @app.route("/submitted", methods = ['POST'])
 def submitted():
-    category = request.form.get("cat")
     file = request.files["file"]
-    capt = request.form.get("capt")
+    category = request.form.get("category")
+    caption = request.form.get("caption")
     print("category: ", category)
-    print("caption: ", capt)
-    target = os.path.join(PATH, "static", "Categories", category, capt)
+    print("caption: ", caption)
+    target = os.path.join(PATH, "static", "Categories", category, caption)
     file.save(target)   
     return redirect("/")
 
@@ -52,7 +55,7 @@ def show_single_image(thepath):
 
 @app.route("/<category>")
 def category_fun(category):
-    print("Category is ", category)
+    # print("Category is ", category)
     images = sorted_images(category)
     return render_template("category.html", info=category, images=images)
 
