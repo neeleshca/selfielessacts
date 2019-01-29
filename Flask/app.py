@@ -46,7 +46,14 @@ def submitted():
 def upload_page():
     return render_template("upload_page.html")
 
+@app.route("/deleted", methods = ['POST'])
+def deleted():
+    filePath = request.form.get("Delete")
+    filePath = os.path.join(PATH, "static", filePath)
 
+    #print(filePath)
+    os.remove(filePath)
+    return redirect("/")
 
 # @app.route("/user/")
 @app.route("/<path:thepath>")
