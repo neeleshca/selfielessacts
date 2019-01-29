@@ -7,7 +7,7 @@
     </title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styleshome.css')}}">
     <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'> 
     
@@ -23,7 +23,7 @@
                 <div class="content">
                     <p>
                         <button class="buttonincr" ><i class="button-icon icon-heart"></i>Me Likey</button>
-                        <input class="likesCounter" type="text" value="0" >
+                        <input class="likesCounter" type="text" value="0" />
                     </p>
                     <p>
                         <button class="buttondelete">Delete</button>        
@@ -32,7 +32,7 @@
             </div>
             <a href="{{url_for('show_single_image',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
 <!-- / Item 02 -->
-    <script type="text/javascript" src="../static/js/action.js"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/action.js')}}"></script>
 
 </body>
 
