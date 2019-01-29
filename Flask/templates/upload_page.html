@@ -5,12 +5,20 @@
     <title>
         Upload Page
     </title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/navstyles.css')}}">
 </head>
 
 <body>
 
-    <div class="topnav" id="myTopnav">
-        {% include 'nav_bar.html' %}
+    <div id='cssmenu'>
+        <ul>
+            <li class='active'><a href="{{ url_for('images')}}"><span>Home</span></a></li>
+            <li><a href="{{url_for('category_fun', category='nature')}}"><span>Nature</span></a></li>
+            <li><a href="{{url_for('category_fun', category='humans')}}"><span>Humans</span></a></li>
+            <li><a href="{{url_for('category_fun', category='animals')}}"><span>Animals</span></a></li>
+            <li><a href="{{url_for('category_fun', category='other')}}"><span>Other</span></a></li>
+            <li class='last'><a href="{{url_for('upload_page')}}"><span>Upload</span></a></li>
+        </ul>
     </div>
     <h1>Upload Page</h1>
     <form id = "upload_form" action = "{{url_for('submitted')}}" method="POST" enctype="multipart/form-data">
