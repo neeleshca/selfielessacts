@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, send_from_directory
 from inspect import getsourcefile
 import os
 from os.path import abspath
@@ -19,6 +19,11 @@ def sorted_images(category):
     sort_list = sorted(sort_list, reverse=True, key=lambda x: x[1])
     images = [i[0] for i in sort_list]
     return images
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route("/")
