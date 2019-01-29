@@ -198,7 +198,6 @@
     transition: all 0.3s ease-in-out;
   }
   
-
 .content {
 	margin: 64px auto;
     width: 94%;
@@ -224,21 +223,21 @@
 }
 
 .buttonincr {
-  display: inline-block;
+    display: inline-block;
     margin: 0;
     padding: 0.75rem 1rem;
-  border: 0;
-  border-radius: 0.317rem;
-  background-color: #aaa;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1rem;
+    border: 0;
+    border-radius: 0.317rem;
+    background-color: #e98724;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
     line-height: 1.5;
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  cursor: pointer;
-  -webkit-appearance: none;
-  -webkit-font-smoothing: antialiased;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -webkit-font-smoothing: antialiased;
 }
 
 .button:hover {
@@ -253,10 +252,6 @@
 	outline: thin dotted #444;
 	outline: 5px auto -webkit-focus-ring-color;
 	outline-offset: -2px;
-}
-
-.button_secondary {
-	background-color: #e98724;
 }
 
 .button-icon {
