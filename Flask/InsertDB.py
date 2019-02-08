@@ -1,9 +1,9 @@
 import pymongo
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-client.drop_database("db")
-db = client["db"]
+client.drop_database("Database")
+db = client["Database"]
 actList = db["Acts"]
-categoryCount = db["Cat"]
+categoryCount = db["Category"]
 
 
 
