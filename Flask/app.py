@@ -90,6 +90,23 @@ def upvote():
         print("Failed Outside")
         print(e)
         return jsonify({}), 400
+
+@app.route("/api/v1/acts/<actID>", methods = ['DELETE'])
+def removeAct(actID):
+    try:
+        query = db.Acts.find({actID:{'$exists':True}})
+        for i in query:
+            print(i)
+            cat = i[actID]['category']
+        if(query.retrieved != 1):
+            raise FileNotFoundError 
+        db.Acts.delete_one({actID:{'$exists':True}})
+        db.Cat.update({cat:{'$exists':True}}, {'$inc':{cat:-1}})
+
+        return jsonify({}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({}), 400
         
 if __name__ == "__main__":
     app.run()
