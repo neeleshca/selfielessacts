@@ -4,6 +4,7 @@ client.drop_database("db")
 db = client["db"]
 actList = db["Acts"]
 categoryCount = db["Cat"]
+users = db["Users"]
 
 
 
@@ -38,3 +39,12 @@ cat = [
     {"Others":25}
 ]
 y = categoryCount.insert_many(cat)
+
+u = [
+	{"Naveen":"abcd"},
+	{"Neelesh":"kill"},
+	{"Nishant":"yourmoms"},
+	{"Midhush":"boxy"}
+]
+
+z = users.insert_many(u)

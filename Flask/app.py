@@ -4,6 +4,8 @@ import os
 from os.path import abspath
 import random
 import pymongo
+import time
+import base64
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["db"]
@@ -80,8 +82,6 @@ def upvote():
         query = db.Acts.find({str(body[0]):{'$exists':True}})
         for i in query:
             print(i)
-        if(query.retrieved == 0):
-            raise FileNotFoundError
         if(query.retrieved != 1):
             raise FileExistsError
         db.Acts.update({str(body[0]):{'$exists':True}}, {'$inc':{str(body[0]) + ".upvotes":1}})
@@ -98,8 +98,6 @@ def removeAct(actID):
         for i in query:
             print(i)
             cat = i[actID]['category']
-        if(query.retrieved != 1):
-            raise FileNotFoundError 
         db.Acts.delete_one({actID:{'$exists':True}})
         db.Cat.update({cat:{'$exists':True}}, {'$inc':{cat:-1}})
 
@@ -107,6 +105,39 @@ def removeAct(actID):
     except Exception as e:
         print(e)
         return jsonify({}), 400
+@app.route('/api/v1/acts', methods = ['POST'])
+def uploadAct():
+    try:
+        body = request.get_json()
+        query = db.Acts.find_one({str(body["actId"]):{'$exists':True}})
+        if query is not None:
+            raise FileExistsError
+        time.strptime(body["timestamp"],"%d-%m-%Y:%S-%M-%H")
+        query = db.Users.find_one({str(body["username"]):{'$exists':True}})
+        if query is None:
+            raise FileNotFoundError
+
+        base64.b64decode(body["imgB64"])
+        if("upvotes" in body):
+            raise TypeError
+        query = db.Cat.find_one({body["categoryName"]:{'$exists':True}})
+        for i in query:
+            print(i)
         
+        toInsert = {str(body["actId"]):{"username":body["username"],"timestamp":body["timestamp"],
+		   "caption":body["caption"],"upvotes":0,"imgb64":body["imgB64"],
+           "category":body["categoryName"]
+		}}
+        db.Acts.insert_one(toInsert)
+        return jsonify({}), 201
+        
+
+    except Exception as e:
+        print(e)
+        return jsonify({}), 400
+
+
+
+    
 if __name__ == "__main__":
     app.run()
