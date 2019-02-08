@@ -1,9 +1,12 @@
-from flask import Flask, render_template, url_for, request, redirect, send_from_directory
+from flask import Flask, render_template, url_for, request, redirect, send_from_directory, jsonify
 from inspect import getsourcefile
 import os
 from os.path import abspath
 import random
+import pymongo
 
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = client["db"]
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
@@ -70,7 +73,23 @@ def category_fun(category):
     # print("Category is ", category)
     images = sorted_images(category)
     return render_template("category.html", info=category, images=images)
-
-
+@app.route("/api/v1/acts/upvote", methods = ['POST'])
+def upvote():
+    try:
+        body =  request.get_json()
+        query = db.Acts.find({str(body[0]):{'$exists':True}})
+        for i in query:
+            print(i)
+        if(query.retrieved == 0):
+            raise FileNotFoundError
+        if(query.retrieved != 1):
+            raise FileExistsError
+        db.Acts.update({str(body[0]):{'$exists':True}}, {'$inc':{str(body[0]) + ".upvotes":1}})
+        return jsonify({}), 200
+    except Exception as e:
+        print("Failed Outside")
+        print(e)
+        return jsonify({}), 400
+        
 if __name__ == "__main__":
     app.run()
