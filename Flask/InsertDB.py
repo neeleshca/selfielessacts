@@ -5,6 +5,7 @@ client.drop_database("database")
 db = client["database"]
 actList = db["acts"]
 categoryCount = db["category"]
+userlist = db["users"]
 
 
 d = [
@@ -49,7 +50,7 @@ d = [
             "caption": "caption text",
             "upvotes": 56,
             "imgb64": "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvb",
-            "category": "Human",
+            "category": "Humans",
         }
     },
 ]
@@ -62,3 +63,12 @@ cat = [
     {"category": {"name": "Other", "count": 25}},
 ]
 y = categoryCount.insert_many(cat)
+
+users = [
+	{"user":{"username":"Naveen", "password":"abcd"}},
+	{"user":{"username":"Neelesh", "password":"efgh"}},
+	{"user":{"username":"Nishant", "password":"ijkl"}},
+	{"user":{"username":"Midhush", "password":"mnop"}}
+]
+
+z = userlist.insert_many(users)
