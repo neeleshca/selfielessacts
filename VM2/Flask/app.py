@@ -34,7 +34,7 @@ def uploadAct():
         print("ActID already Exists!")
         return jsonify({}), 400
     try:
-        time.strptime(body["timestamp"],"%d-%m-%Y:%S-%M-%H")
+        a = time.strptime(body["timestamp"],"%d-%m-%Y:%S-%M-%H")
     except:
         print("Timestamp format not correct!")
         return jsonify({}), 400
@@ -56,7 +56,7 @@ def uploadAct():
         print("Category does not exist!")
         return jsonify({}), 400
     
-    toInsert = {"act":{"actID":str(body["actId"]), "username":body["username"],"timestamp":body["timestamp"],
+    toInsert = {"act":{"actID":str(body["actId"]), "username":body["username"],"timestamp":a,
         "caption":body["caption"],"upvotes":0,"imgb64":body["imgB64"],"category":body["categoryName"]
     }}
     db.acts.insert_one(toInsert)
