@@ -140,9 +140,17 @@ def uploadAct():
         
 
     
-
-
-
+@app.route('/api/v1/uservalidate', methods = ['POST'])
+def validate_user():
+    body = request.get_json()
+    query = db.users.find_one({"user.username":body["username"]})
+    print(query)
+    if query is None:
+        return jsonify({}), 400
+    if query["user"]["password"] != body["password"]:
+        return jsonify({}), 400
+    else:
+        return jsonify({}), 201
     
 if __name__ == "__main__":
     app.run()

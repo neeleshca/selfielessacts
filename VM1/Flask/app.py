@@ -11,9 +11,7 @@ import json
 
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
-backendIP = "http://www.mocky.io/v2/5c5e2b5c320000500040b373"
-app.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
-
+backendIP = "127.0.0.1"
 def sorted_images(category):
     #Sorts images in reverse chronological order of modified time
 
@@ -36,6 +34,7 @@ def favicon():
 @app.route("/")
 def images():
     images = sorted_images("Category_0")
+    print(session.get('user'))
     return render_template("images.html", images=images)
 
 @app.route("/submitted", methods = ['POST'])
@@ -63,13 +62,35 @@ def signupdata():
     req = {"username":username,"password":passwd}
     print(req)
     req = json.dumps(req)
-    resp = requests.post(url = backendIP, json = req)
+    resp = requests.post(url = backendIP + "/api/v1/users", json = req)
     print(resp)
     if(resp.status_code != 201):
         return render_template("signup.html", error = True)
     else:
-        return redirect("/")
+        return redirect("/login")
+@app.route("/login")
+def login():
+    return render_template("login.html", error = False)
 
+@app.route("/logindata")
+def logindata():
+    username = request.form.get("username")
+    passwd = request.form.get("password")
+    passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+    req = {"username":username,"password":passwd}
+    print(req)
+    req = json.dumps(req)
+    resp = requests.post(url = backendIP + "/api/v1/uservalidate", json = req)
+    if(resp.status_code != 201):
+        return render_template("login.html", error = True)
+    else:
+        session['user'] = username
+        return redirect("/")
+@app.route("/logout")
+def logout():
+    session.pop('user', None) 
+    
+    return redirect("/")
 @app.route("/deleted", methods = ['POST'])
 def deleted():
     filePath = request.form.get("Delete")
@@ -99,4 +120,5 @@ def category_fun(category):
 
     
 if __name__ == "__main__":
+    app.secret_key = os.urandom(12)
     app.run()
