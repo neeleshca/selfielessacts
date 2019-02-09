@@ -16,7 +16,15 @@ PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 '''
 APIs START HERE!!!!!!
 '''
-
+@app.route("/api/v1/acts/upvote", methods = ['POST'])
+def upvote():
+    body =  request.get_json()
+    query = db.acts.find_one({"act.actID":str(body[0])})
+    if query is None:
+        print("Act Does Not Exist!")
+        return jsonify({}), 400    
+    db.acts.update_one({"act.actID":str(body[0])}, {'$inc':{"act.upvotes":1}})
+    return jsonify({}), 200
 @app.route("/api/v1/acts/<actID>", methods = ['DELETE'])
 def removeAct(actID):
     query = db.acts.find_one({"act.actID":actID})
