@@ -6,6 +6,7 @@ import random
 import pymongo
 import time
 import base64
+import json
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["database"]
@@ -92,6 +93,28 @@ PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 APIs START HERE!!!!!!
 '''
 
+
+def getNumberOfActs(categoryName):
+    
+    category = db.category.find_one({"category.name":categoryName}) #query for category
+
+    if(category == None): #if category does not exist
+
+        return -1
+    
+    number = category["category"]["count"] #get size from the returned dictionary
+    
+    return number
+
+#get Acts given category
+
+def getActs(categoryName):
+    
+    acts = db.acts.find({"act.category":categoryName}) #query for acts given the category
+    
+    return acts
+
+
 @app.route("/api/v1/acts/<actID>", methods = ['DELETE'])
 def removeAct(actID):
     query = db.acts.find_one({"act.actID":actID})
@@ -151,6 +174,98 @@ def validate_user():
         return jsonify({}), 400
     else:
         return jsonify({}), 201
+
+@app.route('/api/v1/categories/<categoryName>/acts', methods = ['GET'])
+def listActs(categoryName):
+    
+    startRange = request.args.get("start") #get start parameter
+    
+    endRange = request.args.get("end") #get end parameter
+    
+    number = getNumberOfActs(categoryName) #get number of acts of the given category
+    
+    if(number == -1):
+        
+        return jsonify({}), 405  #method not allowed if category does not exist
+    
+    if(number == 0):
+        
+        return jsonify({}), 204  #no content if no acts under existing category
+    
+    if(startRange == None and endRange == None):   #if API 6 
+        
+        if(number < 100):
+            
+            acts = getActs(categoryName)
+            
+            actsList = []
+            
+            for i in acts:
+            
+                i.pop("_id")   #remove the Mongo-DB's in-built ObjectId attribute
+            
+                i["act"]["timestamp"] = i["act"]["timestamp"].strftime("%Y-%m-%d %H:%M:%S") #convert timestamp to string for json conversion
+            
+                actsList.append(i)
+            
+            response = json.dumps(actsList)
+            
+            return response, 200
+        
+        else:
+        
+            return jsonify({}), 413  #if number of acts in the given category is > 100 (Payload too large)
+    
+    else: #if API 8
+        startRange = int(startRange)
+        
+        endRange = int(endRange)
+        
+        if(endRange-startRange+1 > 100):
+            
+            return jsonify({}), 413  #payload to large - range > 100
+
+        if(startRange < 1 or endRange > number): #if invalid range, method not allowed
+            
+            return jsonify({}), 405
+        
+        acts = getActs(categoryName).sort("act.timestamp",-1) #sort in descending order of timestamp (latest first)
+        
+        tempList = []
+        
+        actsList = []
+        
+        for i in acts: #since acts object is not indexable, create a tempList
+            
+            tempList.append(i)
+        
+        for i in range(startRange-1,endRange-1):
+            
+            tempList[i].pop("_id")
+            
+            tempList[i]["act"]["timestamp"] = tempList[i]["act"]["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
+            
+            actsList.append(tempList[i])
+        
+        response = json.dumps(actsList)
+        
+        return response, 200
+
+
+@app.route('/api/v1/categories/<categoryName>/acts/size', methods = ['GET'])
+def getNumberOfActsGivenCategory(categoryName):
+    
+    number = getNumberOfActs(categoryName)
+    
+    if(number == -1):
+    
+        return jsonify({}), 405
+    
+    return jsonify({}), 200
+
     
 if __name__ == "__main__":
     app.run()
+
+
+

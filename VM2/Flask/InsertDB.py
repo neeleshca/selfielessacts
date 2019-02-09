@@ -50,7 +50,7 @@ d = [
             "caption": "caption text",
             "upvotes": 56,
             "imgb64": "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvb",
-            "category": "Human",
+            "category": "Humans",
         }
     },
 ]
