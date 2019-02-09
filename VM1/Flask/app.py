@@ -11,7 +11,8 @@ import json
 
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
-backendIP = "127.0.0.1"
+backendIP = "127.0.0.1:12345"
+os.environ["NO_PROXY"] = '127.0.0.1'
 def sorted_images(category):
     #Sorts images in reverse chronological order of modified time
 
