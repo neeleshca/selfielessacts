@@ -27,8 +27,8 @@ def getNumberOfActs(categoryName):
 
         return -1
     
+    print(category)
     number = category["category"]["count"] #get size from the returned dictionary
-    
     return number
 
 #get Acts given category
@@ -123,14 +123,19 @@ def listActs(categoryName):
         if(number < 100):
             
             acts = getActs(categoryName)
+
+            if(len(acts) == 0):
+                return jsonify({}), 204
             
             actsList = []
             
             for i in acts:
+                print(i)
             
                 i.pop("_id")   #remove the Mongo-DB's in-built ObjectId attribute
             
-                i["act"]["timestamp"] = i["act"]["timestamp"].strftime("%Y-%m-%d %H:%M:%S") #convert timestamp to string for json conversion
+                i["act"]["timestamp"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', tuple(i["act"]["timestamp"]))
+                #i["act"]["timestamp"][0] = i["act"]["timestamp"][0].strftime("%Y-%m-%d:%S:%M:%H") #convert timestamp to string for json conversion
             
                 actsList.append(i)
             
@@ -164,12 +169,20 @@ def listActs(categoryName):
         for i in acts: #since acts object is not indexable, create a tempList
             
             tempList.append(i)
+
+        if(len(tempList) == 0):
+
+            return jsonify({}), 204
+
+        if(startRange < 1 or endRange > len(tempList)):
+            
+            return jsonify({}), 405
         
         for i in range(startRange-1,endRange-1):
             
             tempList[i].pop("_id")
             
-            tempList[i]["act"]["timestamp"] = tempList[i]["act"]["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
+            tempList[i]["act"]["timestamp"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', tuple(tempList[i]["act"]["timestamp"]))
             
             actsList.append(tempList[i])
         
@@ -187,7 +200,11 @@ def getNumberOfActsGivenCategory(categoryName):
     
         return jsonify({}), 405
     
-    return jsonify({}), 200
+    elif(number == 0):
+        
+        return jsonify({}), 204
+    
+    return jsonify([number]), 200
 
     
 @app.route('/api/v1/findactid', methods = ['POST'])
@@ -202,11 +219,5 @@ def find_actid():
     return jsonify([id]), 201
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     app.run()
-
-
-=======
-    app.run(host='127.0.0.1',port=12345)
->>>>>>> 1a274c6dcfd494586f0a2de86aaafc6e03077784
 
