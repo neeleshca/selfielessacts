@@ -17,7 +17,8 @@
                 {% block b %}
                 {% if session['user']%}
                 <li><a href="{{url_for('logout')}}"><span>Log Out</span></a></li>
-                <li class='last'><a href="{{url_for('upload_page')}}"><span>Upload</span></a></li>
+                <li><a href="{{url_for('upload_page')}}"><span>Upload</span></a></li>
+                <li class='last'><a href = "{{url_for('delete_user')}}"> <span>Delete Account</span></a></li>
                 
                 {% else %}
                 <li><a href="{{url_for('signup')}}"><span>Sign Up</span></a></li>

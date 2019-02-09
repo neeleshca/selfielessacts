@@ -11,7 +11,7 @@ userList = db["users"]
 d = [
     {
         "act": {
-            "actID": "1234",
+            "actID": "0",
             "username": "Naveen",
             "timestamp": "23-01-2019:11-01-12",
             "caption": "caption text",
@@ -22,7 +22,7 @@ d = [
     },
     {
         "act": {
-            "actID": "1235",
+            "actID": "1",
             "username": "B",
             "timestamp": "23-01-2019:11-01-12",
             "caption": "caption text",
@@ -33,7 +33,7 @@ d = [
     },
     {
         "act": {
-            "actID": "1236",
+            "actID": "3",
             "username": "C",
             "timestamp": "23-01-2019:11-01-12",
             "caption": "caption text",
@@ -44,7 +44,7 @@ d = [
     },
     {
         "act": {
-            "actID": "1237",
+            "actID": "4",
             "username": "D",
             "timestamp": "23-01-2019:11-01-12",
             "caption": "caption text",
@@ -66,7 +66,7 @@ y = categoryCount.insert_many(cat)
 
 
 users = [
-    {"user": {"username": "Naveen", "password": "abcd"}},
+    {"user": {"username": "Naveen", "password": "88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589"}},
     {"user": {"username": "Neelesh", "password": "poiu"}},
     {"user": {"username": "abc", "password": "peie"}},
 ]

@@ -4,6 +4,7 @@ import os
 from os.path import abspath
 import random
 import time
+import datetime
 import base64
 import requests
 import hashlib
@@ -11,7 +12,7 @@ import json
 
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
-backendIP = "127.0.0.1:12345"
+backendIP = "http://127.0.0.1:12345"
 os.environ["NO_PROXY"] = '127.0.0.1'
 def sorted_images(category):
     #Sorts images in reverse chronological order of modified time
@@ -40,18 +41,34 @@ def images():
 
 @app.route("/submitted", methods = ['POST'])
 def submitted():
+    resp = requests.post(url = backendIP + '/api/v1/findactid')
+    print(resp.json()[0])
     file = request.files["file"]
     category = request.form.get("category")
     caption = request.form.get("caption")
     print("category: ", category)
     print("caption: ", caption)
-    target = os.path.join(PATH, "static", "Categories", category, caption)
-    file.save(target)   
+
+    req = {
+        "actId": resp.json()[0],
+        "username": session['user'],
+        "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%d-%m-%Y:%S-%M-%H'),
+        "caption": caption,
+        "categoryName": category,
+        "imgB64":base64.b64encode(file.read()).decode("utf-8") 
+    }
+    resp = requests.post(url = backendIP + '/api/v1/acts', json = req)
     return redirect("/")
+
+@app.route("/delete_user")
+def delete_user():
+    requests.delete(url = backendIP + session['username'])
+    return redirect("/logout")
 
 @app.route("/upload")
 def upload_page():
-    return render_template("upload_page.html")
+    resp = requests.get(url = backendIP + '/api/v1/categories')    
+    return render_template("upload_page.html", categories = list(resp.json().keys))
 @app.route("/signup")
 def signup():
     return render_template("signup.html", error = False)
@@ -73,14 +90,13 @@ def signupdata():
 def login():
     return render_template("login.html", error = False)
 
-@app.route("/logindata")
+@app.route("/logindata", methods=['POST'])
 def logindata():
     username = request.form.get("username")
     passwd = request.form.get("password")
     passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
     req = {"username":username,"password":passwd}
     print(req)
-    req = json.dumps(req)
     resp = requests.post(url = backendIP + "/api/v1/uservalidate", json = req)
     if(resp.status_code != 201):
         return render_template("login.html", error = True)
@@ -89,8 +105,7 @@ def logindata():
         return redirect("/")
 @app.route("/logout")
 def logout():
-    session.pop('user', None) 
-    
+    session.pop('user', None)     
     return redirect("/")
 @app.route("/deleted", methods = ['POST'])
 def deleted():
