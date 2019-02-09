@@ -16,11 +16,8 @@
 
 	<div id='cssmenu'>
         <ul>
-        	<li class='active'><a href="{{ url_for('images')}}"><span>Home</span></a></li>
-            <li><a href="{{url_for('category_fun', category='nature')}}"><span>Nature</span></a></li>
-            <li><a href="{{url_for('category_fun', category='humans')}}"><span>Humans</span></a></li>
-            <li><a href="{{url_for('category_fun', category='animals')}}"><span>Animals</span></a></li>
-			<li><a href="{{url_for('category_fun', category='other')}}"><span>Other</span></a></li>
+            <li><a href="{{url_for(category_show)}}"><span>Category</span></a></li>
+            
 			{% block b %}
             {% if session['user']%}
             <li><a href="{{url_for('logout')}}"><span>Log Out</span></a></li>
