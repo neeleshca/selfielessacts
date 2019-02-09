@@ -26,19 +26,11 @@
                 
             </ul>
         </div>
-        <h1>Log In</h1>
-        <form id = "login_form" action = "{{url_for('logindata')}}" method="POST" enctype="multipart/form-data">
-              
-            Enter username
-            <input type="text" name = "username"> <br>      
-            Enter Password
-            <input type="password" name = "password"> <br>    
-            <input type="submit" value="Log In"><br>
-            {% block body %}
-            {% if error %}
-            Incorrect UserName or Password
-            {% endif %}
-            {% endblock %}
-        </form>
+        <h1>Categoires</h1>
+        <ul>
+            {% for category in category_list}
+            <a href="{{url_for('category_fun', category=category)}}"><span>category</span></a>
+            {% endfor %}
+        </ul>
     </body>
 </html>

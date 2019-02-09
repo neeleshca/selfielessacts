@@ -107,6 +107,12 @@ def logindata():
 def logout():
     session.pop('user', None)     
     return redirect("/")
+
+@app.route("/categorylist")
+def categorylist():
+    resp = requests.get(url = backendIP + '/api/v1/categories')    
+    return render_template("/category_list.html", category_list = list(resp.json().keys))
+
 @app.route("/deleted", methods = ['POST'])
 def deleted():
     filePath = request.form.get("Delete")
