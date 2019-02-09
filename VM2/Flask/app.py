@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, jsonify
+from flask import Flask, request, send_from_directory, jsonify, make_response
 from inspect import getsourcefile
 import os
 from os.path import abspath
@@ -6,18 +6,32 @@ import random
 import pymongo
 import time
 import base64
+from flask_restful import reqparse, abort, Api, Resource
 import json
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
+
 db = client["database"]
+act = db["acts"]
+category = db["category"]
+
 app = Flask(__name__)
+api = Api(app)
+
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
 
 '''
 APIs START HERE!!!!!!
 '''
-<<<<<<< HEAD
+
+def validate_request(content, input_type, req_len):
+    if isinstance(content, (input_type,)) == False:
+        return False
+    if len(content) != req_len:
+        return False
+
+
 @app.route("/api/v1/acts/upvote", methods = ['POST'])
 def upvote():
     body =  request.get_json()
@@ -27,7 +41,6 @@ def upvote():
         return jsonify({}), 400    
     db.acts.update_one({"act.actID":str(body[0])}, {'$inc':{"act.upvotes":1}})
     return jsonify({}), 200
-=======
 
 
 def getNumberOfActs(categoryName):
@@ -51,7 +64,6 @@ def getActs(categoryName):
     return acts
 
 
->>>>>>> a39121b6f3657688151aa7f0c8cc32fc17e112eb
 @app.route("/api/v1/acts/<actID>", methods = ['DELETE'])
 def removeAct(actID):
     query = db.acts.find_one({"act.actID":actID})
@@ -230,6 +242,58 @@ def find_actid():
         id += 1
     return jsonify([id]), 201
 
-if __name__ == "__main__":
-    app.run()
+class Category(Resource):
+    def get(self):
+        # print("Inside here\n")
+        x = category.find({})
+        dict1 = {i["category"]["name"]: i["category"]["count"] for i in x}
+        if len(dict1) == 0:
+            return make_response(jsonify({}), 204)
+        # response = app.response_class(
+        #     response=json.dumps(y), mimetype='application/json')
+        
+        # return jsonify(dict1)
+        return make_response(jsonify(dict1),200)
+        
 
+    def post(self):
+        # print("Self",self)
+        # print("Resource is ", str(Resource))
+        # print("Self ifs", str(self))
+        try:
+            content = request.json
+        except:
+            return make_response(jsonify({}),400)
+
+        if validate_request(content, list, 1) == False:
+            return make_response(jsonify({}),400)
+
+
+        temp = category.find_one({"category.name": content[0]})
+        # print("Temp is",temp)
+        # print("Temp is ", type((temp)))
+        if temp is not None:
+            return make_response(jsonify({}),400)
+
+        dict_temp = {"category": {"name": content[0], "count": 0}}
+        # print(content)
+        # print(type(content))
+        category.insert(dict_temp)
+        return make_response(jsonify({}),201)
+
+    def delete(self, del_arg):
+        temp = category.delete_one({"category.name": del_arg})
+
+        if temp.deleted_count == 0:
+            return make_response(jsonify({}),400)
+            
+        act.delete_many({"act.category": del_arg})
+        # print(xyz)
+        return make_response(jsonify({}),200)
+
+
+api.add_resource(Category, "/api/v1/categories", "/api/v1/categories/<del_arg>")
+
+if __name__ == "__main__":
+    app.run(host='127.0.0.1',port=5000,debug=True)
+ 
