@@ -7,7 +7,7 @@ actList = db["acts"]
 categoryCount = db["category"]
 userList = db["users"]
 l = [time.strptime("23-01-2019:11-01-12","%d-%m-%Y:%S-%M-%H"),time.strptime("23-01-2019:11-01-13","%d-%m-%Y:%S-%M-%H"),time.strptime("23-01-2019:11-01-14","%d-%m-%Y:%S-%M-%H"),time.strptime("23-01-2019:11-01-15","%d-%m-%Y:%S-%M-%H")]
-
+print(l)
 d = [
     {
         "act": {
@@ -50,7 +50,7 @@ d = [
             "caption": "caption text",
             "upvotes": 56,
             "imgb64": "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvb",
-            "category": "Human",
+            "category": "Humans",
         }
     },
 ]
@@ -61,6 +61,7 @@ cat = [
     {"category": {"name": "Nature", "count": 100}},
     {"category": {"name": "Humans", "count": 50}},
     {"category": {"name": "Other", "count": 25}},
+    {"category": {"name": "ABC", "count": 0}},
 ]
 y = categoryCount.insert_many(cat)
 

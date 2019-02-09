@@ -6,6 +6,7 @@ import random
 import pymongo
 import time
 import base64
+import json
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["database"]
@@ -16,6 +17,28 @@ PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 '''
 APIs START HERE!!!!!!
 '''
+
+
+def getNumberOfActs(categoryName):
+    
+    category = db.category.find_one({"category.name":categoryName}) #query for category
+
+    if(category == None): #if category does not exist
+
+        return -1
+    
+    print(category)
+    number = category["category"]["count"] #get size from the returned dictionary
+    return number
+
+#get Acts given category
+
+def getActs(categoryName):
+    
+    acts = db.acts.find({"act.category":categoryName}) #query for acts given the category
+    
+    return acts
+
 
 @app.route("/api/v1/acts/<actID>", methods = ['DELETE'])
 def removeAct(actID):
@@ -77,6 +100,112 @@ def validate_user():
         return jsonify({}), 400
     else:
         return jsonify({}), 201
+
+@app.route('/api/v1/categories/<categoryName>/acts', methods = ['GET'])
+def listActs(categoryName):
+    
+    startRange = request.args.get("start") #get start parameter
+    
+    endRange = request.args.get("end") #get end parameter
+    
+    number = getNumberOfActs(categoryName) #get number of acts of the given category
+    
+    if(number == -1):
+        
+        return jsonify({}), 405  #method not allowed if category does not exist
+    
+    if(number == 0):
+        
+        return jsonify({}), 204  #no content if no acts under existing category
+    
+    if(startRange == None and endRange == None):   #if API 6 
+        
+        if(number < 100):
+            
+            acts = getActs(categoryName)
+
+            if(len(acts) == 0):
+                return jsonify({}), 204
+            
+            actsList = []
+            
+            for i in acts:
+                print(i)
+            
+                i.pop("_id")   #remove the Mongo-DB's in-built ObjectId attribute
+            
+                i["act"]["timestamp"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', tuple(i["act"]["timestamp"]))
+                #i["act"]["timestamp"][0] = i["act"]["timestamp"][0].strftime("%Y-%m-%d:%S:%M:%H") #convert timestamp to string for json conversion
+            
+                actsList.append(i)
+            
+            response = json.dumps(actsList)
+            
+            return response, 200
+        
+        else:
+        
+            return jsonify({}), 413  #if number of acts in the given category is > 100 (Payload too large)
+    
+    else: #if API 8
+        startRange = int(startRange)
+        
+        endRange = int(endRange)
+        
+        if(endRange-startRange+1 > 100):
+            
+            return jsonify({}), 413  #payload to large - range > 100
+
+        if(startRange < 1 or endRange > number): #if invalid range, method not allowed
+            
+            return jsonify({}), 405
+        
+        acts = getActs(categoryName).sort("act.timestamp",-1) #sort in descending order of timestamp (latest first)
+        
+        tempList = []
+        
+        actsList = []
+        
+        for i in acts: #since acts object is not indexable, create a tempList
+            
+            tempList.append(i)
+
+        if(len(tempList) == 0):
+
+            return jsonify({}), 204
+
+        if(startRange < 1 or endRange > len(tempList)):
+            
+            return jsonify({}), 405
+        
+        for i in range(startRange-1,endRange-1):
+            
+            tempList[i].pop("_id")
+            
+            tempList[i]["act"]["timestamp"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', tuple(tempList[i]["act"]["timestamp"]))
+            
+            actsList.append(tempList[i])
+        
+        response = json.dumps(actsList)
+        
+        return response, 200
+
+
+@app.route('/api/v1/categories/<categoryName>/acts/size', methods = ['GET'])
+def getNumberOfActsGivenCategory(categoryName):
+    
+    number = getNumberOfActs(categoryName)
+    
+    if(number == -1):
+    
+        return jsonify({}), 405
+    
+    elif(number == 0):
+        
+        return jsonify({}), 204
+    
+    return jsonify([number]), 200
+
     
 @app.route('/api/v1/findactid', methods = ['POST'])
 def find_actid():
@@ -90,5 +219,5 @@ def find_actid():
     return jsonify([id]), 201
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1',port=12345)
+    app.run()
 
