@@ -123,9 +123,6 @@ def listActs(categoryName):
         if(number < 100):
             
             acts = getActs(categoryName)
-
-            if(len(acts) == 0):
-                return jsonify({}), 204
             
             actsList = []
             
