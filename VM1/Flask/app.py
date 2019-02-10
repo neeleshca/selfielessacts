@@ -97,7 +97,7 @@ def signup():
 def signupdata():
     username = request.form.get("username")
     passwd = request.form.get("password")
-    passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+    passwd = hashlib.sha1(passwd.encode('utf-8')).hexdigest()
     req = {"username":username,"password":passwd}
     print(req)
     req = json.dumps(req)
@@ -115,7 +115,7 @@ def login():
 def logindata():
     username = request.form.get("username")
     passwd = request.form.get("password")
-    passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+    passwd = hashlib.sha1(passwd.encode('utf-8')).hexdigest()
     req = {"username":username,"password":passwd}
     print(req)
     resp = requests.post(url = backendIP + "/api/v1/uservalidate", json = req)
