@@ -9,10 +9,11 @@
     <body>
         <div id='cssmenu'>
             <ul>
-                <li><a href="{{url_for(category_show)}}"><span>Category</span></a></li>
+                <li><a href="{{url_for('images')}}"><span>Home</span></a></li>
+                <li><a href="{{url_for('category_show')}}"><span>Category</span></a></li>
                 
                 {% block b %}
-                {% if session['user']%}
+                {% if session['user'] %}
                 <li><a href="{{url_for('logout')}}"><span>Log Out</span></a></li>
                 <li><a href="{{url_for('upload_page')}}"><span>Upload</span></a></li>
                 <li class='last'><a href = "{{url_for('delete_user')}}"> <span>Delete Account</span></a></li>
@@ -25,12 +26,13 @@
                 {% endblock %}
                 
             </ul>
-        </div>
-        <h1>Categoires</h1>
+        </div>  
+        <h1>Categories</h1>
         <ul>
-            {% for category in category_list}
-            <a href="{{url_for('category_fun', category=category)}}"><span>category</span></a>
+            {% for ccategory in category_list %}
+            <li><a href="{{url_for('category_fun', category=ccategory)}}"><span>{{ ccategory }}</span></a></li>
             {% endfor %}
         </ul>
+        
     </body>
 </html>

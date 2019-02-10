@@ -12,7 +12,8 @@
 
     <div id='cssmenu'>
         <ul>
-            <li><a href="{{url_for(category_show)}}"><span>Category</span></a></li>
+            <li><a href="{{url_for('images')}}"><span>Home</span></a></li>
+            <li><a href="{{url_for('category_show')}}"><span>Category</span></a></li>
             
 			{% block b %}
             {% if session['user']%}
@@ -36,9 +37,13 @@
         <br>
         Category:
         <br>
-        {% for cat in categories%}
-        <input type="radio" name={{cat}} value="animals"> {{cat}<br>
+        {% block b1 %}
+
+        {% for cat in categories %}
+        <input type="radio" name={{cat}} value={{cat}}> {{cat}}<br>
         {% endfor %}  
+        {% endblock %}
+
         Enter Caption
         <input type="text" name = "caption"> <br>      
         <input type="submit" value="Upload"><br>
