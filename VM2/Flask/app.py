@@ -301,19 +301,19 @@ class User(Resource):
         except:
             return make_response(jsonify({}),400)
 
-        if (validate_request(content, list, 1) == False):
+        if (validate_request(content, dict, 2) == False):
             return make_response(jsonify({}),400)
 
         # user already existing case
-        query = user.find_one({"user.username": content[0]})
+        query = user.find_one({"user.username": content["username"]})
         if query is not None:
             return make_response(jsonify({}),400)
 
         regex = re.compile('^[a-fA-F0-9]{40}$')
-        if (not(regex.match(content[1]))):
+        if (not(regex.match(content["password"]))):
             return make_response(jsonify({}), 400)
 
-        dict_temp = {"user": {"username": content[0], "password": content[1]}}
+        dict_temp = {"user": {"username": content["username"], "password": content["password"]}}
         user.insert(dict_temp)
         return make_response(jsonify({}),201)
 
