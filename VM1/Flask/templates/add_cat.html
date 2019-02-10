@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>
-            Sign Up!
+            Add Category
         </title>
         <link rel="stylesheet" href="{{url_for('static', filename='css/navstyles.css')}}">
 
@@ -27,17 +27,15 @@
                 
             </ul>
         </div>
-        <h1>Sign Up</h1>
-        <form id = "signup_form" action = "{{url_for('signupdata')}}" method="POST" enctype="multipart/form-data">
+        <h1>Add Category</h1>
+        <form id = "add_cat_form" action = "{{url_for('add_cat_data')}}" method="POST">
               
-            Enter username
-            <input type="text" name = "username"> <br>      
-            Enter Password
-            <input type="password" name = "password"> <br>    
-            <input type="submit" value="Sign Up"><br>
+            Enter Category
+            <input type="text" name = "category"> <br>      
+            <input type="submit" value="Add!"><br>
             {% block body %}
             {% if error %}
-            Username Already Exists!
+            Category Already Exists!
             {% endif %}
             {% endblock %}
         </form>

@@ -10,7 +10,7 @@
         <div id='cssmenu'>
             <ul>
                 <li><a href="{{url_for('images')}}"><span>Home</span></a></li>
-                <li><a href="{{url_for('category_show')}}"><span>Category</span></a></li>
+                <li><a href="{{url_for('category_show')}}"><span>Categories</span></a></li>
                 
                 {% block b %}
                 {% if session['user'] %}
@@ -33,6 +33,8 @@
             <li><a href="{{url_for('category_fun', category=ccategory)}}"><span>{{ ccategory }}</span></a></li>
             {% endfor %}
         </ul>
+        <a href = "{{url_for('add_cat')}}">Add Category</a>
+        <a href = "{{url_for('del_cat')}}">Delete Category</a>
         
     </body>
 </html>

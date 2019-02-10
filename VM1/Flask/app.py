@@ -38,7 +38,28 @@ def images():
     images = sorted_images("Category_0")
     print(session.get('user'))
     return render_template("images.html", images=images)
+@app.route("/add_cat")
+def add_cat():
+    return render_template('add_cat.html', error = False)
 
+@app.route("/del_cat")
+def del_cat():
+    resp = requests.get(url = backendIP + '/api/v1/categories')    
+    return render_template('del_cat.html', category_list = list(resp.json().keys()), error=False)
+
+@app.route("/add_cat_data", methods = ['POST']) 
+def add_cat_data():
+    category = request.form.get("category")
+    resp = requests.post(url = backendIP + '/api/v1/categories', json = [category])
+    if(resp.status_code != 201):
+        return render_template('add_cat.html', error = True)
+    else:
+        return redirect('/category_show')
+@app.route('/del_cat_data', methods = ['POST'])
+def del_cat_data():
+    category = request.form.get("category")
+    resp = requests.delete(url = backendIP + "/api/v1/categories/" + category, json = {})  
+    return redirect('/category_show')  
 @app.route("/submitted", methods = ['POST'])
 def submitted():
     resp = requests.post(url = backendIP + '/api/v1/findactid')
