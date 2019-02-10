@@ -12,7 +12,7 @@ import json
 
 app = Flask(__name__)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
-backendIP = "http://127.0.0.1:12345"
+backendIP = "http://127.0.0.1:5001"
 os.environ["NO_PROXY"] = '127.0.0.1'
 def sorted_images(category):
     #Sorts images in reverse chronological order of modified time
@@ -68,7 +68,7 @@ def delete_user():
 @app.route("/upload")
 def upload_page():
     resp = requests.get(url = backendIP + '/api/v1/categories')    
-    return render_template("upload_page.html", categories = list(resp.json().keys))
+    return render_template("upload_page.html", categories = list(resp.json().keys()))
 @app.route("/signup")
 def signup():
     return render_template("signup.html", error = False)
@@ -108,10 +108,11 @@ def logout():
     session.pop('user', None)     
     return redirect("/")
 
-@app.route("/categorylist")
-def categorylist():
-    resp = requests.get(url = backendIP + '/api/v1/categories')    
-    return render_template("/category_list.html", category_list = list(resp.json().keys))
+@app.route("/category_show")
+def category_show():
+    resp = requests.get(url = backendIP + '/api/v1/categories')  
+    print(list(resp.json().keys()))  
+    return render_template("category_list.html", category_list = list(resp.json().keys()))
 
 @app.route("/deleted", methods = ['POST'])
 def deleted():
@@ -137,7 +138,6 @@ def category_fun(category):
     # print("Category is ", category)
     images = sorted_images(category)
     return render_template("category.html", info=category, images=images)
-
 
 
     

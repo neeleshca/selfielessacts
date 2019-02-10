@@ -9,7 +9,8 @@
     <body>
         <div id='cssmenu'>
             <ul>
-                <li><a href="{{url_for(category_show)}}"><span>Category</span></a></li>
+                <li><a href="{{url_for('images')}}"><span>Home</span></a></li>
+                <li><a href="{{url_for('category_show')}}"><span>Category</span></a></li>
                 
                 {% block b %}
                 {% if session['user']%}
