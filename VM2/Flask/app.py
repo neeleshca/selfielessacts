@@ -87,15 +87,18 @@ class User(Resource):
             content = request.json
         except:
             return make_response(jsonify({}), 400)
+
         if validate_request(content, dict, 2) == False:
             return make_response(jsonify({}), 400)
         # user already existing case
         query = user.find_one({"user.username": content["username"]})
         if query is not None:
             return make_response(jsonify({}), 400)
+
         regex = re.compile("^[a-fA-F0-9]{40}$")
         if not (regex.match(content["password"])):
             return make_response(jsonify({}), 400)
+
         dict_temp = {
             "user": {"username": content["username"], "password": content["password"]}
         }
@@ -135,13 +138,19 @@ class Category(Resource):
             content = request.json
         except:
             return make_response(jsonify({}), 400)
+
         if validate_request(content, list, 1) == False:
             return make_response(jsonify({}), 400)
+        
+        if(not isinstance(content[0],str)):
+            return make_response(jsonify({}), 400)
+
         temp = category.find_one({"category.name": content[0]})
         # print("Temp is",temp)
         # print("Temp is ", type((temp)))
         if temp is not None:
             return make_response(jsonify({}), 400)
+        
         dict_temp = {"category": {"name": content[0], "count": 0}}
         # print(content)
         # print(type(content))
@@ -153,6 +162,8 @@ class Category(Resource):
         temp = category.delete_one({"category.name": del_arg})
         if temp.deleted_count == 0:
             return make_response(jsonify({}), 400)
+
+        #Deleting corresponding acts from act table    
         act.delete_many({"act.category": del_arg})
         # print(xyz)
         return make_response(jsonify({}), 200)
@@ -161,13 +172,17 @@ class Category(Resource):
 # API 6 and 8
 @app.route("/api/v1/categories/<categoryName>/acts", methods=["GET"])
 def listActs(categoryName):
-    startRange = request.args.get("start")  # get start parameter
-    endRange = request.args.get("end")  # get end parameter
     number = getNumberOfActs(categoryName)  # get number of acts of the given category
+
     if number == -1:
         return jsonify({}), 405  # method not allowed if category does not exist
+
     if number == 0:
         return jsonify({}), 204  # no content if no acts under existing category
+
+    startRange = request.args.get("start")  # get start parameter
+    endRange = request.args.get("end")  # get end parameter
+
     if startRange == None and endRange == None:  # if API 6
         if number < 100:
             acts = getActs(categoryName)
@@ -186,14 +201,18 @@ def listActs(categoryName):
             return (
                 jsonify({}),
                 413,
-            )  # if number of acts in the given category is > 100 (Payload too large)
+            )  # if number of acts in the given category is => 100 (Payload too large)
+
     else:  # if API 8
         startRange = int(startRange)
         endRange = int(endRange)
+
         if endRange - startRange + 1 > 100:
             return jsonify({}), 413  # payload to large - range > 100
+
         if startRange < 1 or endRange > number:  # if invalid range, method not allowed
             return jsonify({}), 405
+        
         acts = getActs(categoryName).sort(
             "act.timestamp", -1
         )  # sort in descending order of timestamp (latest first)
@@ -201,16 +220,20 @@ def listActs(categoryName):
         actsList = []
         for i in acts:  # since acts object is not indexable, create a tempList
             tempList.append(i)
+
         if len(tempList) == 0:
             return jsonify({}), 204
+        
         if startRange < 1 or endRange > len(tempList):
             return jsonify({}), 405
+        
         for i in range(startRange - 1, endRange - 1):
             tempList[i].pop("_id")
             tempList[i]["act"]["timestamp"] = time.strftime(
                 "%Y-%m-%dT%H:%M:%SZ", tuple(tempList[i]["act"]["timestamp"])
             )
             actsList.append(tempList[i])
+        
         response = json.dumps(actsList)
         return response, 200
 
@@ -219,10 +242,12 @@ def listActs(categoryName):
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["GET"])
 def getNumberOfActsGivenCategory(categoryName):
     number = getNumberOfActs(categoryName)
+
     if number == -1:
         return jsonify({}), 405
     elif number == 0:
         return jsonify({}), 204
+    
     return jsonify([number]), 200
 
 
@@ -234,6 +259,7 @@ def upvote():
     if query is None:
         print("Act Does Not Exist!")
         return jsonify({}), 400
+
     db.acts.update_one({"act.actID": str(body[0])}, {"$inc": {"act.upvotes": 1}})
     return jsonify({}), 200
 
@@ -245,6 +271,7 @@ def removeAct(actID):
     if query is None:
         print("Act Does Not Exist!")
         return jsonify({}), 400
+
     db.category.update_one(
         {"category.name": query["act"]["category"]}, {"$inc": {"category.count": -1}}
     )
@@ -260,24 +287,29 @@ def uploadAct():
     if query is not None:
         print("ActID already Exists!")
         return jsonify({}), 400
+
     try:
         a = time.strptime(body["timestamp"], "%d-%m-%Y:%S-%M-%H")
     except:
         print("Timestamp format not correct!")
         return jsonify({}), 400
+    
     print(body["username"])
     query = db.users.find_one({"user.username": body["username"]})
     if query is None:
         print("User does not exist!")
         return jsonify({}), 400
+
     try:
         base64.b64decode(body["imgB64"])
     except:
         print("Image not Base64 Encoded")
         return jsonify({}), 400
+    
     if "upvotes" in body:
         print("No upvotes field is to be set!")
         return jsonify({}), 400
+    
     query = db.category.find_one({"category.name": body["categoryName"]})
     if query is None:
         print("Category does not exist!")
@@ -293,6 +325,7 @@ def uploadAct():
             "category": body["categoryName"],
         }
     }
+    
     db.acts.insert_one(toInsert)
     db.category.update_one(
         {"category.name": body["categoryName"]}, {"$inc": {"category.count": 1}}
