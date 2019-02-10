@@ -15,7 +15,7 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["database"]
 act = db["acts"]
 category = db["category"]
-user = db["user"]
+user = db["users"]
 
 app = Flask(__name__)
 api = Api(app)
@@ -314,7 +314,7 @@ class User(Resource):
             return make_response(jsonify({}), 400)
 
         dict_temp = {"user": {"username": content["username"], "password": content["password"]}}
-        user.insert(dict_temp)
+        user.insert_one(dict_temp)
         return make_response(jsonify({}),201)
 
     # Removing an user
