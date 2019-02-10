@@ -8,12 +8,14 @@ import time
 import base64
 from flask_restful import reqparse, abort, Api, Resource
 import json
+import re
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 
 db = client["database"]
 act = db["acts"]
 category = db["category"]
+user = db["user"]
 
 app = Flask(__name__)
 api = Api(app)
@@ -242,6 +244,7 @@ def find_actid():
         id += 1
     return jsonify([id]), 201
 
+# API's 3-5
 class Category(Resource):
     def get(self):
         # print("Inside here\n")
@@ -291,7 +294,42 @@ class Category(Resource):
         # print(xyz)
         return make_response(jsonify({}),200)
 
+# API's 1-2
+class User(Resource):
+        
+    # Adding an user
+    def post(self):
+        try:
+            content = request.json
+        except:
+            return make_response(jsonify({}),400)
 
+        if (validate_request(content, list, 1) == False):
+            return make_response(jsonify({}),400)
+
+        # user already existing case
+        query = user.find_one({"user.username": content[0]})
+        if query is not None:
+            return make_response(jsonify({}),400)
+
+        regex = re.compile('^[a-fA-F0-9]{40}$')
+        if (not(regex.match(content[1]))):
+            return make_response(jsonify({}), 400)
+
+        dict_temp = {"user": {"username": content[0], "password": content[1]}}
+        user.insert(dict_temp)
+        return make_response(jsonify({}),201)
+
+    # Removing an user
+    def delete(self, del_arg):
+        query = user.delete_one({"user.username": del_arg})
+        # user does not exist to be deleted
+        if (query.deleted_count == 0):
+            return make_response(jsonify({}),400)
+        return make_response(jsonify({}),200)
+
+
+api.add_resource(User, '/api/v1/users', '/api/v1/users/<del_arg>')
 api.add_resource(Category, "/api/v1/categories", "/api/v1/categories/<del_arg>")
 
 if __name__ == "__main__":
