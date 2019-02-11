@@ -9,6 +9,8 @@ import base64
 from flask_restful import reqparse, abort, Api, Resource
 import json
 import re
+import datetime
+from datetime import datetime
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["database"]
@@ -197,8 +199,9 @@ def listActs(categoryName):
             for i in acts:
                 print(i)
                 i.pop("_id")  # remove the Mongo-DB's in-built ObjectId attribute
-                i["act"]["timestamp"] = time.strftime(
-                    "%Y-%m-%dT%H:%M:%SZ", tuple(i["act"]["timestamp"])
+                i["act"]["actID"] = int(i["act"]["actID"])
+                i["act"]["timestamp"] = i["act"]["timestamp"].strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
                 )
                 # i["act"]["timestamp"][0] = i["act"]["timestamp"][0].strftime("%Y-%m-%d:%S:%M:%H") #convert timestamp to string for json conversion
                 actsList.append(i)
@@ -211,35 +214,60 @@ def listActs(categoryName):
             )  # if number of acts in the given category is => 100 (Payload too large)
 
     else:  # if API 8
+
+        if startRange == None or endRange == None:  #in case of a missing parameter
+            return (
+                jsonify({}),
+                405,
+            )
+
+        if len(startRange) == 0 or len(endRange) == 0:
+            return (
+                jsonify({}),
+                405,
+            )
+
+        print(endRange)
         startRange = int(startRange)
         endRange = int(endRange)
 
         if endRange - startRange + 1 > 100:
-            return jsonify({}), 413  # payload to large - range > 100
+            return jsonify({}), 413  # payload too large - range > 100
 
         if startRange < 1 or endRange > number:  # if invalid range, method not allowed
             return jsonify({}), 405
         
-        acts = getActs(categoryName).sort(
+        acts = getActs(categoryName).sort([[
             "act.timestamp", -1
-        )  # sort in descending order of timestamp (latest first)
+            ],[
+            "act.actID", -1
+            ]]
+        ) # sort in descending order of timestamp (latest first)
+
         tempList = []
         actsList = []
         for i in acts:  # since acts object is not indexable, create a tempList
             tempList.append(i)
-
-        if len(tempList) == 0:
-            return jsonify({}), 204
+        print(tempList)
         
         if startRange < 1 or endRange > len(tempList):
             return jsonify({}), 405
-        
-        for i in range(startRange - 1, endRange - 1):
-            tempList[i].pop("_id")
-            tempList[i]["act"]["timestamp"] = time.strftime(
-                "%Y-%m-%dT%H:%M:%SZ", tuple(tempList[i]["act"]["timestamp"])
+
+        if(startRange == endRange):
+            tempList[startRange - 1].pop("_id")
+            tempList[startRange - 1]["act"]["actID"] = int(tempList[startRange - 1]["act"]["actID"])
+            tempList[startRange - 1]["act"]["timestamp"] = tempList[startRange - 1]["act"]["timestamp"].strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
             )
-            actsList.append(tempList[i])
+            actsList.append(tempList[startRange - 1])
+        else:
+            for i in range(startRange - 1, endRange):
+                tempList[i].pop("_id")
+                tempList[i]["act"]["actID"] = int(tempList[i]["act"]["actID"])
+                tempList[i]["act"]["timestamp"] = tempList[i]["act"]["timestamp"].strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                )
+                actsList.append(tempList[i])
         
         response = json.dumps(actsList)
         return response, 200
