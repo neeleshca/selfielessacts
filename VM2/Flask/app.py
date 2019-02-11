@@ -92,6 +92,13 @@ class User(Resource):
 
         if validate_request(content, dict, 2) == False:
             return make_response(jsonify({}), 400)
+        
+        if (not(isinstance(content["username"], str))):
+            return make_response(jsonify({}), 400)
+        
+        if (not(isinstance(content["password"], str))):
+            return make_response(jsonify({}), 400)
+
         # user already existing case
         query = user.find_one({"user.username": content["username"]})
         if query is not None:
