@@ -193,7 +193,6 @@ def listActs(categoryName):
                 print(i)
                 i.pop("_id")  # remove the Mongo-DB's in-built ObjectId attribute
                 i["act"]["actID"] = int(i["act"]["actID"])
-                i["act"]["timestamp"] = x
                 i["act"]["timestamp"] = i["act"]["timestamp"].strftime(
                     "%Y-%m-%dT%H:%M:%SZ"
                 )
