@@ -92,6 +92,10 @@ class User(Resource):
 
         if validate_request(content, dict, 2) == False:
             return make_response(jsonify({}), 400)
+
+        for i in content.keys():
+            if i not in ['username', 'password']:
+                return make_response(jsonify({}), 400)
         
         if (not(isinstance(content["username"], str))):
             return make_response(jsonify({}), 400)
