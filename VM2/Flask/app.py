@@ -67,11 +67,11 @@ def validate_user():
 # Helper API for generating unique act ID
 @app.route("/api/v1/findactid", methods=["POST"])
 def find_actid():
-    cursor = db.acts.find().sort("act.actID", pymongo.ASCENDING)
+    cursor = db.acts.find().sort("act.actId", pymongo.ASCENDING)
     id = 0
     for i in cursor:
         print(i)
-        if i["act"]["actID"] != str(id):
+        if i["act"]["actId"] != str(id):
             break
         id += 1
     return jsonify([id]), 201
@@ -204,12 +204,12 @@ def listActs(categoryName):
                 print(i)
                 i.pop("_id")  # remove the Mongo-DB's in-built ObjectId attribute
                 i["act"].pop("category")
-                i["act"]["actID"] = int(i["act"]["actID"])
+                i["act"]["actId"] = int(i["act"]["actId"])
                 i["act"]["timestamp"] = i["act"]["timestamp"].strftime(
                     "%d-%m-%Y:%S-%M-%H"
                 )
                 # i["act"]["timestamp"][0] = i["act"]["timestamp"][0].strftime("%Y-%m-%d:%S:%M:%H") #convert timestamp to string for json conversion
-                actsList.append(i)
+                actsList.append(i['act'])
             response = json.dumps(actsList)
             return response, 200
         else:
@@ -245,7 +245,7 @@ def listActs(categoryName):
         acts = getActs(categoryName).sort([[
             "act.timestamp", -1
             ],[
-            "act.actID", -1
+            "act.actId", -1
             ]]
         ) # sort in descending order of timestamp (latest first)
 
@@ -261,7 +261,7 @@ def listActs(categoryName):
         if(startRange == endRange):
             tempList[startRange - 1].pop("_id")
             tempList[i]["act"].pop("category")
-            tempList[startRange - 1]["act"]["actID"] = int(tempList[startRange - 1]["act"]["actID"])
+            tempList[startRange - 1]["act"]["actId"] = int(tempList[startRange - 1]["act"]["actId"])
             tempList[startRange - 1]["act"]["timestamp"] = tempList[startRange - 1]["act"]["timestamp"].strftime(
                 "%d-%m-%Y:%S-%M-%H"
             )
@@ -270,13 +270,16 @@ def listActs(categoryName):
             for i in range(startRange - 1, endRange):
                 tempList[i].pop("_id")
                 tempList[i]["act"].pop("category")
-                tempList[i]["act"]["actID"] = int(tempList[i]["act"]["actID"])
+                tempList[i]["act"]["actId"] = int(tempList[i]["act"]["actId"])
                 tempList[i]["act"]["timestamp"] = tempList[i]["act"]["timestamp"].strftime(
                     "%d-%m-%Y:%S-%M-%H"
                 )
                 actsList.append(tempList[i])
         
-        response = json.dumps(actsList)
+        newList = list()
+        for i in actsList:
+            newList.append(i['act'])
+        response = json.dumps(newList)
         return response, 200
 
 
@@ -297,19 +300,19 @@ def getNumberOfActsGivenCategory(categoryName):
 @app.route("/api/v1/acts/upvote", methods=["POST"])
 def upvote():
     body = request.get_json()
-    query = db.acts.find_one({"act.actID": str(body[0])})
+    query = db.acts.find_one({"act.actId": str(body[0])})
     if query is None:
         print("Act Does Not Exist!")
         return jsonify({}), 400
     #check if int
-    db.acts.update_one({"act.actID": str(body[0])}, {"$inc": {"act.upvotes": 1}})
+    db.acts.update_one({"act.actId": str(body[0])}, {"$inc": {"act.upvotes": 1}})
     return jsonify({}), 200
 
 
 # API - 10
-@app.route("/api/v1/acts/<actID>", methods=["DELETE"])
-def removeAct(actID):
-    query = db.acts.find_one({"act.actID": actID})
+@app.route("/api/v1/acts/<actId>", methods=["DELETE"])
+def removeAct(actId):
+    query = db.acts.find_one({"act.actId": actId})
     if query is None:
         print("Act Does Not Exist!")
         return jsonify({}), 400
@@ -317,7 +320,7 @@ def removeAct(actID):
     db.category.update_one(
         {"category.name": query["act"]["category"]}, {"$inc": {"category.count": -1}}
     )
-    db.acts.delete_one({"act.actID": actID})
+    db.acts.delete_one({"act.actId": actId})
     return jsonify({}), 200
 
 
@@ -326,7 +329,7 @@ def removeAct(actID):
 def uploadAct():
     #must check request
     body = request.get_json()
-    query = db.acts.find_one({"act.actID": str(body["actId"])})
+    query = db.acts.find_one({"act.actId": str(body["actId"])})
     if query is not None:
         print("ActID already Exists!")
         return jsonify({}), 400
@@ -359,7 +362,7 @@ def uploadAct():
         return jsonify({}), 400
     toInsert = {
         "act": {
-            "actID": str(body["actId"]),
+            "actId": str(body["actId"]),
             "username": body["username"],
             "timestamp": a,
             "caption": body["caption"],
