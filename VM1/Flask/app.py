@@ -104,7 +104,7 @@ def submitted():
     }
     resp = requests.post(url=backendIP + '/api/v1/acts', json=req)
     return redirect("/")
-``
+
 
 @app.route("/delete_user")
 def delete_user():

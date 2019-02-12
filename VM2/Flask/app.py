@@ -321,6 +321,7 @@ def removeAct(actID):
 # API - 11
 @app.route("/api/v1/acts", methods=["POST"])
 def uploadAct():
+    #must check request
     body = request.get_json()
     query = db.acts.find_one({"act.actID": str(body["actId"])})
     if query is not None:
@@ -328,7 +329,7 @@ def uploadAct():
         return jsonify({}), 400
 
     try:
-        a = time.strptime(body["timestamp"], "%d-%m-%Y:%S-%M-%H")
+        a = datetime.strptime(body["timestamp"], "%d-%m-%Y:%S-%M-%H")
     except:
         print("Timestamp format not correct!")
         return jsonify({}), 400
