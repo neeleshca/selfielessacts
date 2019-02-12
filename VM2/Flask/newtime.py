@@ -34,7 +34,7 @@ times = list()
 sec = 0
 for i in range(1000):
     times.append(
-        time.strptime(
+        datetime.strptime(
             (time.strftime("%d-%m-%Y:%S-%M-%H", time.localtime(time.time() + sec))),
             "%d-%m-%Y:%S-%M-%H",
         )
