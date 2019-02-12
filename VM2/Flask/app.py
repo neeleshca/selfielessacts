@@ -321,6 +321,7 @@ def removeAct(actID):
 # API - 11
 @app.route("/api/v1/acts", methods=["POST"])
 def uploadAct():
+    #must check request
     body = request.get_json()
     query = db.acts.find_one({"act.actID": str(body["actId"])})
     if query is not None:
