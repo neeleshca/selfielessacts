@@ -136,7 +136,7 @@ class Category(Resource):
         x = category.find({})
         dict1 = {i["category"]["name"]: i["category"]["count"] for i in x}
         if len(dict1) == 0:
-            return make_response(jsonify({}), 204)
+            return make_response('', 204)
         # response = app.response_class(
         #     response=json.dumps(y), mimetype='application/json')
         # return jsonify(dict1)
@@ -191,7 +191,7 @@ def listActs(categoryName):
         return jsonify({}), 405  # method not allowed if category does not exist
 
     if number == 0:
-        return jsonify({}), 204  # no content if no acts under existing category
+        return '', 204  # no content if no acts under existing category
 
     startRange = request.args.get("start")  # get start parameter
     endRange = request.args.get("end")  # get end parameter
@@ -285,7 +285,7 @@ def getNumberOfActsGivenCategory(categoryName):
     if number == -1:
         return jsonify({}), 405
     elif number == 0:
-        return jsonify({}), 204
+        return '', 204
     
     return jsonify([number]), 200
 
