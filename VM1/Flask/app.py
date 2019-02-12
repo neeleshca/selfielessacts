@@ -189,9 +189,9 @@ act_set_g100 = requests.get(url=backendIP + 'api/v1/categories/' + category + '/
 @app.route("/<path:act_id>")
 def show_single_image(act_id):
     # print(thepath)
-    if (next(item for item in act_set_le100 if item["actId"] == act_id) != None):
+    try: 
         act_data = next(item for item in act_set_le100 if item["actId"] == act_id)
-    else:
+    except:
         act_data = next(item for item in act_set_g100 if item["actId"] == act_id)
     return render_template("image_single.html", single_datum=act_data)
 
