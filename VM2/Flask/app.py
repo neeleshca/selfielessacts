@@ -203,9 +203,10 @@ def listActs(categoryName):
             for i in acts:
                 print(i)
                 i.pop("_id")  # remove the Mongo-DB's in-built ObjectId attribute
+                i["act"].pop("category")
                 i["act"]["actID"] = int(i["act"]["actID"])
                 i["act"]["timestamp"] = i["act"]["timestamp"].strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
+                    "%d-%m-%Y:%S-%M-%H"
                 )
                 # i["act"]["timestamp"][0] = i["act"]["timestamp"][0].strftime("%Y-%m-%d:%S:%M:%H") #convert timestamp to string for json conversion
                 actsList.append(i)
@@ -259,17 +260,19 @@ def listActs(categoryName):
 
         if(startRange == endRange):
             tempList[startRange - 1].pop("_id")
+            tempList[i]["act"].pop("category")
             tempList[startRange - 1]["act"]["actID"] = int(tempList[startRange - 1]["act"]["actID"])
             tempList[startRange - 1]["act"]["timestamp"] = tempList[startRange - 1]["act"]["timestamp"].strftime(
-                "%Y-%m-%dT%H:%M:%SZ"
+                "%d-%m-%Y:%S-%M-%H"
             )
             actsList.append(tempList[startRange - 1])
         else:
             for i in range(startRange - 1, endRange):
                 tempList[i].pop("_id")
+                tempList[i]["act"].pop("category")
                 tempList[i]["act"]["actID"] = int(tempList[i]["act"]["actID"])
                 tempList[i]["act"]["timestamp"] = tempList[i]["act"]["timestamp"].strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
+                    "%d-%m-%Y:%S-%M-%H"
                 )
                 actsList.append(tempList[i])
         
