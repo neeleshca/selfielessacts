@@ -108,7 +108,7 @@ def submitted():
 
 @app.route("/delete_user")
 def delete_user():
-    requests.delete(url=backendIP + session['username'])
+    requests.delete(url=backendIP + "/api/v1/users/" + session['user'])
     return redirect("/logout")
 
 
@@ -131,7 +131,6 @@ def signupdata():
     passwd = hashlib.sha1(passwd.encode('utf-8')).hexdigest()
     req = {"username": username, "password": passwd}
     print(req)
-    req = json.dumps(req)
     resp = requests.post(url=backendIP + "/api/v1/users", json=req)
     print(resp)
     if (resp.status_code != 201):
@@ -183,22 +182,34 @@ def deleted():
     os.remove(filePath)
     return redirect("/")
 
+act_set_le100 = requests.get(url=backendIP + 'api/v1/categories/' + category + '/acts')
+act_set_g100 = requests.get(url=backendIP + 'api/v1/categories/' + category + '/acts?start=' + startRange + '&end=' + endRange)
 
 # @app.route("/user/")
-@app.route("/<path:thepath>")
-def show_single_image(thepath):
-    temp = thepath.rsplit('/')[-1]
-    caption = temp.rsplit('.')[0]
+@app.route("/<path:act_id>")
+def show_single_image(act_id):
     # print(thepath)
-    return render_template("image_single.html", image=thepath, caption=caption)
+    if (next(item for item in act_set_le100 if item["actId"] == act_id) != None):
+        act_data = next(item for item in act_set_le100 if item["actId"] == act_id)
+    else:
+        act_data = next(item for item in act_set_g100 if item["actId"] == act_id)
+    return render_template("image_single.html", single_datum=act_data)
 
 
 @app.route("/<category>")
 def category_fun(category):
     # print("Category is ", category)
-    images = sorted_images(category)
-    return render_template("category.html", info=category, images=images)
-
+    resp = requests.get(url=backendIP + 'api/v1/categories/' + category + '/acts/size')
+    if (resp <= 100):
+        act_set = act_set_le100
+        act_set_data = act_set.json()
+        return render_template("category_le100.html", info=category, datum=act_set_data)
+    else:
+        startRange = 1
+        endRange = 100
+        act_set = act_set_g100
+        act_set_data = act_set.json()
+        return render_template("category_g100.html", info=category, datum=act_set_data)
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)

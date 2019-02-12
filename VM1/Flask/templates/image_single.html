@@ -38,11 +38,11 @@
     </div>
     
             <div class="description">
-                <h1>{{caption}}</h1>
+                <h1>{{single_datum['caption']}}</h1>
                 <div class="content">
                     <p>
                         <button class="buttonincr" ><i class="button-icon icon-heart"></i>Upvote</button>
-                        <input class="likesCounter" type="text" value="0" />
+                        <input class="likesCounter" type="text" value="{{single_datum['upvotes']}}" />
                     </p>
                     <p>
                         <form id = "upload_form" action = "{{url_for('deleted')}}" method="POST" enctype="multipart/form-data">
@@ -52,7 +52,9 @@
                     </p>
                 </div>
             </div>
-            <a href="{{url_for('show_single_image',thepath = image)}}"><img src="{{url_for('static', filename=image)}}"></a>
+            <a href="{{url_for('show_single_image',act_id=data['actId'])}}">
+                <img src="data:image/png;base64, {{single_datum['imgB64']}}" alt="">
+            </a>
     <script type="text/javascript" src="{{url_for('static', filename='js/action.js')}}"></script>
 
 </body>

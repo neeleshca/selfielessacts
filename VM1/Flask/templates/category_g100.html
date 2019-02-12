@@ -44,10 +44,10 @@
 		<div class="row">
 			<ul>
 				<a href="#" class="close"></a>
-				{% for image in images %}
+				{% for data in datum %}
 				<li>
-					<a href="{{url_for('show_single_image',thepath = image)}}">
-						<img src="{{url_for('static', filename=image)}}" alt="">
+					<a href="{{url_for('show_single_image',act_id=data['actId'])}}">
+						<img src="data:image/png;base64, {{data['imgB64']}}" alt="">
 					</a>
 				</li>
 				{% endfor %}
