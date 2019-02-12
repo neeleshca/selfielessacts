@@ -364,7 +364,7 @@ def uploadAct():
             "timestamp": a,
             "caption": body["caption"],
             "upvotes": 0,
-            "imgb64": body["imgB64"],
+            "imgB64": body["imgB64"],
             "category": body["categoryName"],
         }
     }

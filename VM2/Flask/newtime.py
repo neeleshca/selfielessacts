@@ -48,12 +48,12 @@ for i in range(500):
     category_l_dict[category_rand] += 1
     d_temp = {
         "act": {
-            "actID": str(int(time.time() * 10 ** 10)),
+            "actId": str(int(time.time() * 10 ** 10)),
             "username": random.choice(users_l),
             "timestamp": random.choice(times),
             "caption": "caption text",
             "upvotes": random.randint(1, 1001),
-            "imgb64": "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvb",
+            "imgB64": "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvb",
             "category": category_rand,
         }
     }
