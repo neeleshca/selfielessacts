@@ -104,11 +104,11 @@ def submitted():
     }
     resp = requests.post(url=backendIP + '/api/v1/acts', json=req)
     return redirect("/")
-
+``
 
 @app.route("/delete_user")
 def delete_user():
-    requests.delete(url=backendIP + session['username'])
+    requests.delete(url=backendIP + "/api/v1/users/" + session['user'])
     return redirect("/logout")
 
 
@@ -131,7 +131,6 @@ def signupdata():
     passwd = hashlib.sha1(passwd.encode('utf-8')).hexdigest()
     req = {"username": username, "password": passwd}
     print(req)
-    req = json.dumps(req)
     resp = requests.post(url=backendIP + "/api/v1/users", json=req)
     print(resp)
     if (resp.status_code != 201):

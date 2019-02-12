@@ -298,7 +298,7 @@ def upvote():
     if query is None:
         print("Act Does Not Exist!")
         return jsonify({}), 400
-
+    #check if int
     db.acts.update_one({"act.actID": str(body[0])}, {"$inc": {"act.upvotes": 1}})
     return jsonify({}), 200
 

@@ -52,7 +52,7 @@ for i in range(500):
             "username": random.choice(users_l),
             "timestamp": random.choice(times),
             "caption": "caption text",
-            "upvotes": str(random.randint(1, 1001)),
+            "upvotes": random.randint(1, 1001),
             "imgb64": "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvb",
             "category": category_rand,
         }
