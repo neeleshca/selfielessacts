@@ -328,7 +328,7 @@ def uploadAct():
         return jsonify({}), 400
 
     try:
-        a = time.strptime(body["timestamp"], "%d-%m-%Y:%S-%M-%H")
+        a = datetime.strptime(body["timestamp"], "%d-%m-%Y:%S-%M-%H")
     except:
         print("Timestamp format not correct!")
         return jsonify({}), 400
