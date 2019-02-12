@@ -60,10 +60,10 @@ d = [
 x = actList.insert_many(d)
 
 cat = [
-    {"category": {"name": "Nature", "count": 100}},
-    {"category": {"name": "Humans", "count": 50}},
-    {"category": {"name": "Other", "count": 25}},
-    {"category": {"name": "ABC", "count": 0}},
+    {"category": {"name": "Nature", "count": 3}},
+    {"category": {"name": "Humans", "count": 1}},
+    {"category": {"name": "Other", "count": 200}},
+    {"category": {"name": "ABC", "count": 100}},
 ]
 y = categoryCount.insert_many(cat)
 
