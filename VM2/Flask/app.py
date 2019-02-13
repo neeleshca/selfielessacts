@@ -300,6 +300,10 @@ def getNumberOfActsGivenCategory(categoryName):
 @app.route("/api/v1/acts/upvote", methods=["POST"])
 def upvote():
     body = request.get_json()
+    if validate_request(body, list, 1) == False:
+            return jsonify({}), 400
+    if (not(isinstance(body[0], int))):
+            return jsonify({}), 400
     query = db.acts.find_one({"act.actId": str(body[0])})
     if query is None:
         print("Act Does Not Exist!")
@@ -312,6 +316,9 @@ def upvote():
 # API - 10
 @app.route("/api/v1/acts/<actId>", methods=["DELETE"])
 def removeAct(actId):
+    body = request.get_json()
+    if validate_request(body, dict, 0) == False:
+            return jsonify({}), 400
     query = db.acts.find_one({"act.actId": actId})
     if query is None:
         print("Act Does Not Exist!")
@@ -327,8 +334,27 @@ def removeAct(actId):
 # API - 11
 @app.route("/api/v1/acts", methods=["POST"])
 def uploadAct():
-    #must check request
     body = request.get_json()
+    if validate_request(body, dict, 6) == False:
+            return jsonify({}), 400
+    validate_set = {"actId", "username", "timestamp", "caption", "categoryName", "imgB64"}
+    if set(body.keys()) != validate_set:
+        print("Invalid Format of Request!")
+        return jsonify({}), 400
+    if (not(isinstance(body["actId"], int))):
+        print("actId must be int!")
+        return jsonify({}), 400
+    if (not(isinstance(body["username"], str))):
+        return jsonify({}), 400
+    if (not(isinstance(body["timestamp"], str))):
+        return jsonify({}), 400
+    if (not(isinstance(body["caption"], str))):
+        return jsonify({}), 400
+    if (not(isinstance(body["categoryName"], str))):
+        return jsonify({}), 400
+    if (not(isinstance(body["imgB64"], str))):
+        return jsonify({}), 400
+    
     query = db.acts.find_one({"act.actId": str(body["actId"])})
     if query is not None:
         print("ActID already Exists!")
