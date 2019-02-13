@@ -207,6 +207,13 @@ api.add_resource(Category_delete, "/api/v1/categories/<del_arg>")
 
 
 # API 6 and 8
+@app.route("/api/v1/categories/<categoryName>/acts", methods = ["HEAD"])
+def listActsHead(categoryName):
+	return (
+		jsonify({}),
+		405
+		)
+
 @app.route("/api/v1/categories/<categoryName>/acts", methods=["GET"])
 def listActs(categoryName):
     number = getNumberOfActs(categoryName)  # get number of acts of the given category
@@ -308,6 +315,15 @@ def listActs(categoryName):
 
 
 # API - 7
+
+@app.route("/api/v1/categories/<categoryName>/acts/size", methods=["HEAD"])
+def getNumberOfActsGivenCategoryHeadError(categoryName):
+	return (
+		jsonify({}),
+		405
+		)
+
+
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["GET"])
 def getNumberOfActsGivenCategory(categoryName):
     number = getNumberOfActs(categoryName)
