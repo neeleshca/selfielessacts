@@ -118,13 +118,8 @@ class User_normal(Resource):
         user.insert_one(dict_temp)
         return make_response(jsonify({}), 201)
 
-    # Removing an user - API 2
-    def delete(self, del_arg):
-        query = user.delete_one({"user.username": del_arg})
-        # user does not exist to be deleted
-        if query.deleted_count == 0:
-            return make_response(jsonify({}), 400)
-        return make_response(jsonify({}), 200)
+    def head(self):
+        return make_response(jsonify({}), 405)
 
 
 class User_delete(Resource):
@@ -136,6 +131,9 @@ class User_delete(Resource):
         if query.deleted_count == 0:
             return make_response(jsonify({}), 400)
         return make_response(jsonify({}), 200)
+
+    def head(self):
+        return make_response(jsonify({}), 405)
 
 
 api.add_resource(User_normal, "/api/v1/users")
@@ -184,6 +182,9 @@ class Category_normal(Resource):
         category.insert(dict_temp)
         return make_response(jsonify({}), 201)
 
+    def head(self):
+        return make_response(jsonify({}), 405)
+
 
 class Category_delete(Resource):
 
@@ -198,7 +199,8 @@ class Category_delete(Resource):
         # print(xyz)
         return make_response(jsonify({}), 200)
 
-
+    def head(self):
+        return make_response(jsonify({}), 405)
 
 api.add_resource(Category_normal, "/api/v1/categories")
 api.add_resource(Category_delete, "/api/v1/categories/<del_arg>")
