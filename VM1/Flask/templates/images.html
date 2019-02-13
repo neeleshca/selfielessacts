@@ -42,21 +42,7 @@
 			
         </ul>
     </div>
-    <section class="gallery">
-		<div class="row">
-			<ul>
-				<a href="#" class="close"></a>
-				{% for image in images %}
-				<li>
-					<a href="{{url_for('show_single_image',thepath = image)}}">
-						<img src="{{url_for('static', filename=image)}}" alt="">
-					</a>
-				</li>
-				{% endfor %}
-			</ul>
-		</div>
-	</section>
-
+    
 </body>
 
-</html>`
+</html>

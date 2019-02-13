@@ -72,7 +72,7 @@ def add_cat_data():
 @app.route('/del_cat_data', methods=['POST'])
 def del_cat_data():
     category = request.form.get("category")
-    resp = requests.delete(
+    requests.delete(
         url=backendIP + "/api/v1/categories/" + category, json={})
     return redirect('/category_show')
 
@@ -182,9 +182,10 @@ def deleted():
     os.remove(filePath)
     return redirect("/")
 
-act_set_le100 = requests.get(url=backendIP + 'api/v1/categories/' + category + '/acts')
-act_set_g100 = requests.get(url=backendIP + 'api/v1/categories/' + category + '/acts?start=' + startRange + '&end=' + endRange)
-
+act_set_le100 = None
+act_set_g100 = None
+startRange = 0
+endRange = 0
 # @app.route("/user/")
 @app.route("/<path:act_id>")
 def show_single_image(act_id):
@@ -199,14 +200,18 @@ def show_single_image(act_id):
 @app.route("/<category>")
 def category_fun(category):
     # print("Category is ", category)
-    resp = requests.get(url=backendIP + 'api/v1/categories/' + category + '/acts/size')
-    if (resp <= 100):
+    resp = requests.get(url=backendIP + '/api/v1/categories/' + category + '/acts/size')
+    if (int(resp.json()[0]) <= 100):
+        global act_set_le100
+        act_set_le100 = requests.get(url=backendIP + '/api/v1/categories/' + category + '/acts')
         act_set = act_set_le100
         act_set_data = act_set.json()
         return render_template("category_le100.html", info=category, datum=act_set_data)
     else:
         startRange = 1
         endRange = 100
+        global act_set_g100
+        act_set_g100 = requests.get(url=backendIP + '/api/v1/categories/' + category + '/acts?start=' + startRange + '&end=' + endRange)
         act_set = act_set_g100
         act_set_data = act_set.json()
         return render_template("category_g100.html", info=category, datum=act_set_data)
