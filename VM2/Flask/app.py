@@ -270,8 +270,11 @@ def listActs(categoryName):
         if endRange - startRange + 1 > 100:
             return jsonify({}), 413  # payload too large - range > 100
 
-        if startRange < 1 or endRange > number:  # if invalid range, method not allowed
+        if startRange < 1:  # if invalid range, method not allowed
             return jsonify({}), 405
+
+        if endRange > number:
+        	return jsonify({}), 413
         
         acts = getActs(categoryName).sort([[
             "act.timestamp", -1
