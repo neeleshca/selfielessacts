@@ -82,7 +82,7 @@ APIs START HERE!!!!!!
 """
 
 # API's 1-2
-class User(Resource):
+class User_normal(Resource):
     # Adding an user - API 1
     def post(self):
         try:
@@ -127,8 +127,22 @@ class User(Resource):
         return make_response(jsonify({}), 200)
 
 
+class User_delete(Resource):
+    # Adding an user - API 2
+    # Removing an user - API 2
+    def delete(self, del_arg):
+        query = user.delete_one({"user.username": del_arg})
+        # user does not exist to be deleted
+        if query.deleted_count == 0:
+            return make_response(jsonify({}), 400)
+        return make_response(jsonify({}), 200)
+
+
+api.add_resource(User_normal, "/api/v1/users")
+api.add_resource(User_delete,"/api/v1/users/<del_arg>")
+
 # API's 3-5
-class Category(Resource):
+class Category_normal(Resource):
 
     # API - 3
     def get(self):
@@ -170,6 +184,9 @@ class Category(Resource):
         category.insert(dict_temp)
         return make_response(jsonify({}), 201)
 
+
+class Category_delete(Resource):
+
     # API - 5
     def delete(self, del_arg):
         temp = category.delete_one({"category.name": del_arg})
@@ -180,6 +197,11 @@ class Category(Resource):
         act.delete_many({"act.category": del_arg})
         # print(xyz)
         return make_response(jsonify({}), 200)
+
+
+
+api.add_resource(Category_normal, "/api/v1/categories")
+api.add_resource(Category_delete, "/api/v1/categories/<del_arg>")
 
 
 # API 6 and 8
@@ -405,8 +427,7 @@ def uploadAct():
     return jsonify({}), 201
 
 
-api.add_resource(User, "/api/v1/users", "/api/v1/users/<del_arg>")
-api.add_resource(Category, "/api/v1/categories", "/api/v1/categories/<del_arg>")
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001, debug=True)
 
