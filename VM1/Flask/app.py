@@ -252,6 +252,7 @@ def category_fun(category):
         act_set_g100 = act_set_g100.json()
         return render_template("category_g100.html", info=category, datum=act_set_data)
 
+app.secret_key = "super secret key"
 if __name__ == "__main__":
-    app.secret_key = os.urandom(12)
+    # app.secret_key = os.urandom(12)
     app.run()
