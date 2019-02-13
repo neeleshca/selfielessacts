@@ -13,7 +13,7 @@ print(l)
 d = [
     {
         "act": {
-            "actID": "0",
+            "actId": "0",
             "username": "Naveen",
             "timestamp": l[0],
             "caption": "caption text",
@@ -24,7 +24,7 @@ d = [
     },
     {
         "act": {
-            "actID": "3",
+            "actId": "3",
             "username": "C",
             "timestamp": l[0],
             "caption": "caption text",
@@ -35,7 +35,7 @@ d = [
     },
     {
         "act": {
-            "actID": "1",
+            "actId": "1",
             "username": "B",
             "timestamp": l[1],
             "caption": "caption text",
@@ -46,7 +46,7 @@ d = [
     },
     {
         "act": {
-            "actID": "4",
+            "actId": "4",
             "username": "D",
             "timestamp": l[3],
             "caption": "caption text",
