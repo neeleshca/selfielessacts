@@ -267,6 +267,9 @@ def listActs(categoryName):
         startRange = int(startRange)
         endRange = int(endRange)
 
+        if(startRange > endRange):
+        	return jsonify({}), 405
+
         if endRange - startRange + 1 > 100:
             return jsonify({}), 413  # payload too large - range > 100
 
