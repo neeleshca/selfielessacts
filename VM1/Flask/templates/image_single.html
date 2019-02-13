@@ -41,18 +41,22 @@
                 <h1>{{single_datum['caption']}}</h1>
                 <div class="content">
                     <p>
-                        <button class="buttonincr" ><i class="button-icon icon-heart"></i>Upvote</button>
-                        <input class="likesCounter" type="text" value="{{single_datum['upvotes']}}" />
+                        <form id = "upvote_form" action = "{{url_for('upvote_front')}}" method="POST" enctype="multipart/form-data">
+
+                            <button class="buttonincr" name = "act_id" type = "submit" value = "{{single_datum['actId']}}"><i class="button-icon icon-heart"></i>Upvote</button>
+                            {{single_datum['upvotes']}}
+                        <!-- <input class="likesCounter" type="text" value="{{single_datum['upvotes']}}" /> -->
+                        </form>
                     </p>
                     <p>
-                        <form id = "upload_form" action = "{{url_for('deleted')}}" method="POST" enctype="multipart/form-data">
-                            <button name="Delete" value="{{image}}" type="submit" class = "buttondelete">Delete</button>
+                        <form id = "upload_form" action = "{{url_for('delete_image')}}" method="POST" enctype="multipart/form-data">
+                            <button name = "act_id" type="submit" value = "{{single_datum['actId']}}" class = "buttondelete">Delete</button>
                         </form>
 
                     </p>
                 </div>
             </div>
-            <a href="{{url_for('show_single_image',act_id=data['actId'])}}">
+            <a href="{{url_for('show_single_image',act_id=single_datum['actId'])}}">
                 <img src="data:image/png;base64, {{single_datum['imgB64']}}" alt="">
             </a>
     <script type="text/javascript" src="{{url_for('static', filename='js/action.js')}}"></script>
