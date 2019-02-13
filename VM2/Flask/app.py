@@ -132,7 +132,7 @@ class User_delete(Resource):
             return make_response(jsonify({}), 400)
         return make_response(jsonify({}), 200)
 
-    def head(self):
+    def head(self, del_arg):
         return make_response(jsonify({}), 405)
 
 
@@ -199,7 +199,7 @@ class Category_delete(Resource):
         # print(xyz)
         return make_response(jsonify({}), 200)
 
-    def head(self):
+    def head(self, del_arg):
         return make_response(jsonify({}), 405)
 
 api.add_resource(Category_normal, "/api/v1/categories")
