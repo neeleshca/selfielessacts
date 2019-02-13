@@ -289,8 +289,11 @@ def listActs(categoryName):
             tempList.append(i)
         print(tempList)
         
-        if startRange < 1 or endRange > len(tempList):
+        if startRange < 1:
             return jsonify({}), 405
+
+        if endRange > len(tempList):
+        	return jsonify({}), 413
 
         if(startRange == endRange):
             tempList[startRange - 1].pop("_id")
