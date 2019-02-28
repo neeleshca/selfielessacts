@@ -118,6 +118,16 @@ class User_normal(Resource):
         user.insert_one(dict_temp)
         return make_response(jsonify({}), 201)
 
+    # New API - User List
+    def get(self):
+        x = user.find({})
+        userlist = []
+        for i in x:
+            userlist.append(i["user"]["username"])
+        if (len(userlist) == 0):
+            return make_response('', 204)
+        return make_response(jsonify(userlist), 200)
+
     def head(self):
         return make_response(jsonify({}), 405)
 
