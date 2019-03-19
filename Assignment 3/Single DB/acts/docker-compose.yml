@@ -1,0 +1,21 @@
+version: '3'
+services:
+  acts:
+    build: .
+    ports:
+     - "8000:80"
+    networks:
+     - cc-net
+    container_name: acts
+    image: acts
+    environment:
+     - TEAM_ID=CC_208_222_223_236
+
+  mongo:
+    image: "mongo"
+    networks:
+     - cc-net
+
+networks:
+  cc-net:
+    driver: bridge
