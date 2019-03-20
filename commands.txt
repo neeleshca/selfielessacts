@@ -1,0 +1,333 @@
+Instance ID : i-0a2a91f8fe5948a57
+Public DNS IPv4 : ec2-52-91-44-223.compute-1.amazonaws.com
+IPv4 public IP : 52.91.44.223
+
+
+For an Ubuntu AMI, the user name is ubuntu.
+
+    environment:
+     - NODE_ENV=production
+
+    environment:
+     - TEAM_ID=CC_208_222_223_236
+
+TEAM_ID=CC_208_222_223_236
+
+
+ASSIGNMENT - 2
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem ec2-ubuntu@2001:ec2-52-91-44-223.compute-1.amazonaws.com
+
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem ubuntu@ec2-18-212-109-48.compute-1.amazonaws.com
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com
+
+
+ASSIGNMENT - 3
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem ubuntu@ec2-18-212-109-48.compute-1.amazonaws.com
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem root@ec2-18-212-109-48.compute-1.amazonaws.com
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-18-212-109-48.compute-1.amazonaws.com
+
+TEST VM 
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem ubuntu@ec2-54-211-164-205.compute-1.amazonaws.com
+
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem ec2-user@ec2-54-210-248-101.compute-1.amazonaws.com
+
+ssh -i hailmary.pem neelesh@ec2-18-205-23-48.compute-1.amazonaws.com
+
+ssh -i neelesh@ec2-52-90-187-17.compute-1.amazonaws.com
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/MongoTest/app2.py neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/bitbucket/projectselfielessacts/VM2/Flask/newtime.py neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+SCP TO ASSIGNMENT - 3
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/New_Temp/requirements.txt neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~/testing_123  ~/
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~/python3  ~/
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Folders/testing_123/docker-compose.yml ubuntu@ec2-34-228-229-25.compute-1.amazonaws.com:~/
+
+sudo mkdir -p /var/www/assignment1.com/html
+sudo chown -R $USER:$USER /var/www/assignment1.com/html
+
+sudo chmod -R 755 /var/www/assignment1.com
+nano /var/www/assignment1.com/html/index.html
+
+
+<html>
+    <head>
+        <title>Welcome to Assignment1.com!</title>
+    </head>
+    <body>
+        <h1>Success!  The Assignment1.com server block is working!</h1>
+    </body>
+</html>
+
+sudo nano /etc/apache2/sites-available/assignment1.com.conf
+
+
+<VirtualHost *:80>
+    ServerAdmin admin@assignment1.com
+    ServerName assignment1.com
+    ServerAlias www.assignment1.com
+    DocumentRoot /var/www/assignment1.com/html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+sudo a2ensite assignment1.com.conf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sudo mkdir -p /var/www/test.com/html
+sudo chown -R $USER:$USER /var/www/test.com/html
+
+sudo chmod -R 755 /var/www/test.com
+nano /var/www/test.com/html/index.html
+
+
+<html>
+    <head>
+        <title>Welcome to test.com!</title>
+    </head>
+    <body>
+        <h1>Success!  The test.com server block is working!</h1>
+    </body>
+</html>
+
+sudo nano /etc/apache2/sites-available/test.com.conf
+
+
+<VirtualHost *:80>
+    ServerAdmin admin@test.com
+    ServerName test.com
+    ServerAlias www.test.com
+    DocumentRoot /var/www/test.com/html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+sudo a2ensite test.com.conf
+
+
+
+
+
+
+
+
+
+
+/etc/apache2/sites-available/Assignment1.com.conf
+
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@Assignment1.com
+    ServerName www.Assignment1.com
+    ServerAlias Assignment1.com
+    ErrorLog /var/www/Assignment1.com/logs/error.log
+    CustomLog /var/www/Assignment1.com/logs/access.log combined
+
+    WSGIDaemonProcess Assignment1 user=www-data group=www-data threads=5
+    WSGIProcessGroup Assignment1
+    WSGIScriptAlias / /var/www/CloudComputing/Assignment1/Assignment1.wsgi
+    Alias /static/ /var/www/CloudComputing/Assignment1/static
+    <Directory /var/www/CloudComputing/Assignment1/static>
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+</VirtualHost>
+
+
+sudo a2ensite Assignment1.com.conf
+
+
+/var/www/CloudComputing/Assignment1/Assignment1.wsgi
+
+
+#!/usr/bin/python
+import sys
+sys.path.insert(0,"/var/www/CloudComputing/")
+from Assignment1 import app as application
+
+sudo mkdir -p /var/www/Assignment1.com/logs
+
+sudo chown -R www-data:www-data Assignment1.com
+
+sudo /etc/init.d/apache2 reload
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/CloudComputing ~/
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem ec2-user@ec2-54-161-202-65.compute-1.amazonaws.com:~/var/www/Assignment1.com/logs/access.log ~/
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/empty neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:~
+
+ec2-user@c2-198-51-100-1.compute-1.amazonaws.com:~
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/CloudComputing ~/
+
+sshfs -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/CloudComputing ~/
+
+
+
+ssh -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com
+
+
+sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt
+
+
+sshfs neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt -o IdentityFile=/home/neelesh/Semester/Semester\ 6/Big\ Data/Assignment/Assignment\ 1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem
+
+sudo sshfs -o allow_other,IdentityFile=/home/neelesh/Semester/Semester\ 6/Big\ Data/Assignment/Assignment\ 1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt
+
+
+sshfs -o ssh_command='ssh -i path/to/keyfile/id_rsa.2' username@ipaddress:/path /local/path
+
+
+sshfs -odebug,sshfs_debug,loglevel=debug
+
+sudo sshfs -odebug,sshfs_debug,loglevel=debug -o allow_other,IdentityFile="/home/neelesh/Semester/Semester\ 6/Big\ Data/Assignment/Assignment\ 1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem" neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt
+
+
+
+sudo sshfs -odebug,sshfs_debug,loglevel=debug -o allow_other,IdentityFile="'/home/neelesh/Semester/Semester 6/Big Data/Assignment/Assignment 1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem'" neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt
+
+
+
+sudo sshfs -odebug,sshfs_debug,loglevel=debug -o allow_other,IdentityFile=/home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt
+
+
+sudo sshfs -odebug,sshfs_debug,loglevel=debug -o allow_other,IdentityFile=/home/neelesh/Semester/Semester_6/Big_Data/Assignment/Assignment_1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /mnt
+
+sudo sshfs -o allow_other,IdentityFile=/home/neelesh/Semester/Semester_6/Big_Data/Assignment/Assignment_1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/ /home/neelesh/mnt
+
+
+
+/home/neelesh/Semester/Semester_6/Big_Data/Assignment/Assignment_1//home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem
+
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/CloudComputing ~/
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:~/example/requirements.txt ~/
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/CloudComputing ~/
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/New_Temp/requirements.txt neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r /home/neelesh/Semester/Semester_6/Big_Data/Assignment/Assignment_1/To_Copy/images.html neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:~
+
+
+
+/home/neelesh/Semester/Semester_6/Big_Data/Assignment/bitbucket/projectselfielessacts/To_Copy/test.html
+
+
+
+sudo nano /etc/apache2/sites-available/Assignment1.com.conf
+
+
+/home/neelesh/New
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/CloudComputing /home/neelesh/New
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/FLASKAPPS/helloworldapp/Assignment1.wsgi /home/neelesh/New
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r neelesh@ec2-54-161-202-65.compute-1.amazonaws.com:/var/www/Assignment1.com /home/neelesh/New
+
+/etc/apache2/sites-available/Assignment1.com.conf
+/var/www/FLASKAPPS/helloworldapp/Assignment1.wsgi
+
+/var/www/Assignment1.com
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/MongoTest/Virtual/app.py neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/MongoTest/app.py neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/bitbucket/projectselfielessacts/Flask/templates/images.html neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+scp -i /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/Assignment_1/Assignment-1.pem -r /home/neelesh/Semester/Semester_6/Cloud_Computing/Assignment/bitbucket/projectselfielessacts/Flask neelesh@ec2-18-212-109-48.compute-1.amazonaws.com:~
+
+find /var/www/CloudComputing/Assignment1/static -type d -exec chmod 755 {} \;
+find /var/www/CloudComputing/Assignment1/static -type f -exec chmod 644 {} \;
+
+find /var/www/CloudComputing/Assignment1/templates -type d -exec chmod 755 {} \;
+find /var/www/CloudComputing/Assignment1/templates -type f -exec chmod 644 {} \;
+
+
+find /var/www/CloudComputing/Assignment1/static -type d -exec chmod 777 {} \;
+find /var/www/CloudComputing/Assignment1/static -type f -exec chmod 777 {} \;
+
+
+find /var/www/CloudComputing/Assignment1/templates -type d -exec chmod 777 {} \;
+find /var/www/CloudComputing/Assignment1/templates -type f -exec chmod 777 {} \;
+
+
+/var/www/CloudComputing/Assignment1
+
+
+
+
+https://superuser.com/questions/581194/setting-correct-permissions-for-uploading-files
+Try running:
+
+ps -ef | grep apache
+
+and look at the left-most column corresponding to the Apache server. This is the user that is running Apache, and by inheritance also PHP.
+
+Change ownership of the upload directory to this user and restrict the permissions a bit, e.g. if the web server user was www-data that belongs to the group of the same name (using a sample path of /var/www/uploads):
+
+sudo chown www-data:www-data /var/www/uploads
+sudo chmod 755 /var/www/uploads
+
+(or whatever permissions you want in this instance). I use sudo in the example commands — I don't know exactly how the EC2 systems are set up in this regard to get superuser privileges.
+
+If you have already uploaded files/directories, you might want to change ownership and permissions on them as well. To do this, going from 777 to more reasonable permissions, you could run:
+
+sudo chown -R www-data:www-data /var/www/CloudComputing/Assignment1/static
+sudo chmod -R 755 /var/www/CloudComputing/Assignment1/static
+sudo find /var/www/CloudComputing/Assignment1/static -type f -exec chmod -x {} \;
+
+Don't "blindly" run commands if you do not understand each part of them. Check the man pages if anything is unclear (it should be quite straightforward).
+
+
+
+
+rsync --archive --chown=neelesh:neelesh ~/.ssh /home/neelesh
+
+
+
+
+
+
+apk update 
+apk add nginx
+apk add openrc --no-cache
+adduser -D -g 'www' www
+mkdir /www 
+chown -R www:www /var/lib/nginx 
+chown -R www:www /www
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
+
+rc-service nginx start
+mkdir -p /run/nginx
