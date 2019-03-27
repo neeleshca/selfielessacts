@@ -14,6 +14,7 @@ services:
 
   mongo:
     image: "mongo"
+    container_name: mongo_users
     networks:
      - mongo-users
 
@@ -21,5 +22,4 @@ networks:
   acts_cc-net:
      external: true
   mongo-users:
-    driver: bridge   
-
+    driver: bridge
