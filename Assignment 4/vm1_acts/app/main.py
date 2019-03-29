@@ -22,7 +22,7 @@ category = db["category"]
 acts_http_reqs_init = db.acts_http_reqs.insert({'requests': 0})
 acts_count_init = db.acts_count.insert({'count': 0})
 
-user_ms = "http://34.229.105.252:80"
+user_ms = "http://54.210.103.126:80"
 
 app = Flask(__name__)
 api = Api(app)
