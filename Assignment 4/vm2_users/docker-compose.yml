@@ -1,0 +1,22 @@
+version: '3'
+services:
+  users:
+    build: .
+    ports:
+     - "80:80"
+    networks:
+     - mongo-users
+    container_name: users
+    image: users
+    environment:
+     - TEAM_ID=CC_208_222_223_236
+
+  mongo:
+    image: "mongo"
+    container_name: mongo_users
+    networks:
+     - mongo-users
+
+networks:
+  mongo-users:
+    driver: bridge
