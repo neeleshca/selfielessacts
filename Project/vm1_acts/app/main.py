@@ -13,7 +13,7 @@ import datetime
 from datetime import datetime
 import requests
 
-database_ms = "mongo"
+database_ms = "mongo_acts"
 client = pymongo.MongoClient(database_ms,27017)
 db = client["database"]
 act = db["acts"]

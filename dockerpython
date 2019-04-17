@@ -49,6 +49,7 @@ NETWORK
 network (str) – Name of the network this container will be connected to at creation time. You can connect to additional networks using Network.connect(). Incompatible with network_mode.
 
 
+client.networks.create("network1", driver="bridge")
 client.containers.run('acts',ports={'80/tcp': 8080},network="network1",detach = True)
 
 
@@ -65,6 +66,23 @@ STOP  and REMOVE
 a = client.containers.get("8000_acts")
 a.stop()
 a.remove()
+
+docker run --network=my-net -itd --name=container3 busybox
+docker run  -p 8080:80 acts --network=network1
+
+
+
+Getting acts container to work with mongo
+
+client.networks.create("network1", driver="bridge")
+client.containers.run('mongo:latest',network="network1",name="mongo_acts",detach = True)
+client.containers.run('acts',ports={'80/tcp': 8080},network="network1",environment={"TEAM_ID":"CC_208_222_223_236"},name="8000_acts",detach = True)
+
+
+
+
+
+
 
 
 Id => b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9
