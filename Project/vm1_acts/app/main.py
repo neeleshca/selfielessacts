@@ -20,8 +20,10 @@ act = db["acts"]
 category = db["category"]
 health = True
 
-acts_http_reqs_init = db.acts_http_reqs.insert({'requests': 0})
-acts_count_init = db.acts_count.insert({'count': 0})
+# acts_http_reqs_init = db.acts_http_reqs.insert({'requests': 0})
+# acts_count_init = db.acts_count.insert({'count': 0})
+acts_http_requests = 0
+acts_count = 0
 
 user_ms = "http://54.210.103.126:80"
 
@@ -69,17 +71,23 @@ def find_actid():
 
 #increment the count for the number of http requests
 def incrementRequests():
-    db.acts_http_reqs.update({}, {'$inc': {'requests': 1}})
+    # db.acts_http_reqs.update({}, {'$inc': {'requests': 1}})
+    global acts_http_requests
+    acts_http_requests += 1
     return 1
 
 #reset the http request count to zero
 def resetRequests():
-    db.acts_http_reqs.update({}, {'requests': 0})
+    # db.acts_http_reqs.update({}, {'requests': 0})
+    global acts_http_requests
+    acts_http_requests = 0
     return 1
 
 #increment the total number of acts
 def incrementActs():
-    db.acts_count.update({}, {'$inc': {'count': 1}})
+    # db.acts_count.update({}, {'$inc': {'count': 1}})
+    global acts_count
+    acts_count += 1
 
 class Category_normal(Resource):
 
@@ -443,8 +451,9 @@ class HTTP_count_acts(Resource):
     def get(self):
         if(not health):
             return ('', 500)
-        count_reqs = db.acts_http_reqs.find_one({}, {'requests': 1})
-        return make_response(json.dumps([count_reqs['requests']]), 200)
+        # count_reqs = db.acts_http_reqs.find_one({}, {'requests': 1})
+        global acts_http_requests
+        return make_response(json.dumps([acts_http_requests]), 200)
 
     def head(self):
         if(not health):
@@ -466,8 +475,9 @@ class count_acts(Resource):
         if(not health):
             return ('', 500)
         incrementRequests()
-        count_acts = db.acts_count.find_one({}, {'count': 1})
-        return make_response(json.dumps([count_acts['requests']]), 200)
+        # count_acts = db.acts_count.find_one({}, {'count': 1})
+        global acts_count
+        return make_response(json.dumps([acts_count]), 200)
 
     def head(self):
         if(not health):
