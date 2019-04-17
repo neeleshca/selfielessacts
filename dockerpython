@@ -1,0 +1,198 @@
+
+import docker
+client = docker.from_env()
+client.containers.run('mongo',detach = True)
+client.containers.list()
+a = client.containers.get("b07d96fea1eb")
+
+
+for key,value in a.attrs.items():
+...     print(key,"=>",value)
+...     print("\n\n\n")
+
+a.attrs['Config']['ExposedPorts']
+
+list(a.attrs['Config']['ExposedPorts'].keys())[0]
+
+
+container_id = client.containers.run(
+    'acts', ports=[80],
+    host_config=docker.utils.create_host_config(port_bindings={
+        80: 8080
+    })
+)
+
+
+
+PORT     
+
+ports (dict) –
+
+Ports to bind inside the container.
+
+The keys of the dictionary are the ports to bind inside the container, either as an integer or a string in the form port/protocol, where the protocol is either tcp or udp.
+
+The values of the dictionary are the corresponding ports to open on the host, which can be either:
+
+    The port number, as an integer. For example, {'2222/tcp': 3333} will expose port 2222 inside the container as port 3333 on the host.
+    None, to assign a random host port. For example, {'2222/tcp': None}.
+    A tuple of (address, port) if you want to specify the host interface. For example, {'1111/tcp': ('127.0.0.1', 1111)}.
+    A list of integers, if you want to bind multiple host ports to a single container port. For example, {'1111/tcp': [1234, 4567]}.
+
+
+
+
+TEAM_ID=CC_208_222_223_236
+
+NETWORK    
+
+network (str) – Name of the network this container will be connected to at creation time. You can connect to additional networks using Network.connect(). Incompatible with network_mode.
+
+
+client.networks.create("network1", driver="bridge")
+client.containers.run('acts',ports={'80/tcp': 8080},network="network1",detach = True)
+
+
+
+
+ENVIRONMENT VARIABLE
+client.containers.run('acts',ports={'80/tcp': 8080},environment={"TEAM_ID":"CC_208_222_223_236"},detach = True)
+
+
+NAME  
+client.containers.run('acts',ports={'80/tcp': 8080},environment={"TEAM_ID":"CC_208_222_223_236"},name="8000_acts",detach = True)
+
+STOP  and REMOVE
+a = client.containers.get("8000_acts")
+a.stop()
+a.remove()
+
+docker run --network=my-net -itd --name=container3 busybox
+docker run  -p 8080:80 acts --network=network1
+
+
+
+Getting acts container to work with mongo
+
+client.networks.create("network1", driver="bridge")
+client.containers.run('mongo:latest',network="network1",name="mongo_acts",detach = True)
+client.containers.run('acts',ports={'80/tcp': 8080},network="network1",environment={"TEAM_ID":"CC_208_222_223_236"},name="8000_acts",detach = True)
+
+
+
+
+
+
+
+
+Id => b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9
+
+
+
+
+Created => 2019-04-17T07:12:27.497054499Z
+
+
+
+
+Path => docker-entrypoint.sh
+
+
+
+
+Args => ['mongod']
+
+
+
+
+State => {'Status': 'running', 'Running': True, 'Paused': False, 'Restarting': False, 'OOMKilled': False, 'Dead': False, 'Pid': 10520, 'ExitCode': 0, 'Error': '', 'StartedAt': '2019-04-17T07:12:27.956218149Z', 'FinishedAt': '0001-01-01T00:00:00Z'}
+
+
+
+
+Image => sha256:b1c8142b3efc0b00c32c57a4095366a48a5b769b94f243ddf2bac4d44ad242c0
+
+
+
+
+ResolvConfPath => /var/lib/docker/containers/b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9/resolv.conf
+
+
+
+
+HostnamePath => /var/lib/docker/containers/b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9/hostname
+
+
+
+
+HostsPath => /var/lib/docker/containers/b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9/hosts
+
+
+
+
+LogPath => /var/lib/docker/containers/b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9/b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9-json.log
+
+
+
+
+Name => /amazing_feistel
+
+
+
+
+RestartCount => 0
+
+
+
+
+Driver => overlay2
+
+
+
+
+Platform => linux
+
+
+
+
+MountLabel => 
+
+
+
+
+ProcessLabel => 
+
+
+
+
+AppArmorProfile => docker-default
+
+
+
+
+ExecIDs => None
+
+
+
+
+HostConfig => {'Binds': None, 'ContainerIDFile': '', 'LogConfig': {'Type': 'json-file', 'Config': {}}, 'NetworkMode': 'default', 'PortBindings': None, 'RestartPolicy': {'Name': '', 'MaximumRetryCount': 0}, 'AutoRemove': False, 'VolumeDriver': '', 'VolumesFrom': None, 'CapAdd': None, 'CapDrop': None, 'Dns': None, 'DnsOptions': None, 'DnsSearch': None, 'ExtraHosts': None, 'GroupAdd': None, 'IpcMode': 'shareable', 'Cgroup': '', 'Links': None, 'OomScoreAdj': 0, 'PidMode': '', 'Privileged': False, 'PublishAllPorts': False, 'ReadonlyRootfs': False, 'SecurityOpt': None, 'UTSMode': '', 'UsernsMode': '', 'ShmSize': 67108864, 'Runtime': 'runc', 'ConsoleSize': [0, 0], 'Isolation': '', 'CpuShares': 0, 'Memory': 0, 'NanoCpus': 0, 'CgroupParent': '', 'BlkioWeight': 0, 'BlkioWeightDevice': None, 'BlkioDeviceReadBps': None, 'BlkioDeviceWriteBps': None, 'BlkioDeviceReadIOps': None, 'BlkioDeviceWriteIOps': None, 'CpuPeriod': 0, 'CpuQuota': 0, 'CpuRealtimePeriod': 0, 'CpuRealtimeRuntime': 0, 'CpusetCpus': '', 'CpusetMems': '', 'Devices': None, 'DeviceCgroupRules': None, 'DiskQuota': 0, 'KernelMemory': 0, 'MemoryReservation': 0, 'MemorySwap': 0, 'MemorySwappiness': None, 'OomKillDisable': False, 'PidsLimit': 0, 'Ulimits': None, 'CpuCount': 0, 'CpuPercent': 0, 'IOMaximumIOps': 0, 'IOMaximumBandwidth': 0, 'MaskedPaths': ['/proc/asound', '/proc/acpi', '/proc/kcore', '/proc/keys', '/proc/latency_stats', '/proc/timer_list', '/proc/timer_stats', '/proc/sched_debug', '/proc/scsi', '/sys/firmware'], 'ReadonlyPaths': ['/proc/bus', '/proc/fs', '/proc/irq', '/proc/sys', '/proc/sysrq-trigger']}
+
+
+
+
+GraphDriver => {'Data': {'LowerDir': '/var/lib/docker/overlay2/45b8a7cfcf3c6384976f40d135c1989e65380de20c094f8b7aec58552aee9564-init/diff:/var/lib/docker/overlay2/7f278c199c2ac215a04387b69fa0043eaba2e77f0f1e37d4e2e8838c94e487ff/diff:/var/lib/docker/overlay2/5ef7030f80d4db4ccf37eabc6704784f310050d354684054c2619ad202650f9a/diff:/var/lib/docker/overlay2/323949acb374eb15651e4991ef1e5665d86d712c02bad1c54fc4f3c8fb067e49/diff:/var/lib/docker/overlay2/d842b6b721e4bd54f4f34f15c736ed8b4a0c76e8347f83d4356493a82ecee610/diff:/var/lib/docker/overlay2/b7c832334e8a066e5325439139584205b476d47dc600b567750880e262346c6d/diff:/var/lib/docker/overlay2/d3a8a1a08cbba26a95fb79e1349d31d17fcfcf3449496ddaa4cd372920be41d9/diff:/var/lib/docker/overlay2/20fb049b1a91d67eb1462c1068e272a28b99076cbe2541c9bb24ebe05c126ebe/diff:/var/lib/docker/overlay2/74c261ea4a07dc4db19839784a02dd00078e77c2f85b0d9406b56a3d0e48fb81/diff:/var/lib/docker/overlay2/ea8abe870ba63b5f6bf5be3a0178ee1e9c7ffb095bf88dff3877a7318f914e1a/diff:/var/lib/docker/overlay2/442814d94391274faa8325966beab718adfb42659c81a751ab7e365e7677fa60/diff:/var/lib/docker/overlay2/4290b80e3798d27d4f1f80d9ef850cf47555bb5bbe6300375b25478b87a4e19d/diff:/var/lib/docker/overlay2/fe769adcc92672ceaf7fc69fcc0023658f94737c5d742384f5699be66d20ce25/diff:/var/lib/docker/overlay2/89639a6db031302e4b58e041ded8c058605089930fdb9423f9f518d680850827/diff', 'MergedDir': '/var/lib/docker/overlay2/45b8a7cfcf3c6384976f40d135c1989e65380de20c094f8b7aec58552aee9564/merged', 'UpperDir': '/var/lib/docker/overlay2/45b8a7cfcf3c6384976f40d135c1989e65380de20c094f8b7aec58552aee9564/diff', 'WorkDir': '/var/lib/docker/overlay2/45b8a7cfcf3c6384976f40d135c1989e65380de20c094f8b7aec58552aee9564/work'}, 'Name': 'overlay2'}
+
+
+
+
+Mounts => [{'Type': 'volume', 'Name': 'df4e209fc56cefa634635502255dfc00d6422acc1ea4886dbf7feed1be3b6a14', 'Source': '/var/lib/docker/volumes/df4e209fc56cefa634635502255dfc00d6422acc1ea4886dbf7feed1be3b6a14/_data', 'Destination': '/data/db', 'Driver': 'local', 'Mode': '', 'RW': True, 'Propagation': ''}, {'Type': 'volume', 'Name': '400491b7a69cd7429108639ae620b5b7864b3860c2c72a8bfa0f8f63d195bd45', 'Source': '/var/lib/docker/volumes/400491b7a69cd7429108639ae620b5b7864b3860c2c72a8bfa0f8f63d195bd45/_data', 'Destination': '/data/configdb', 'Driver': 'local', 'Mode': '', 'RW': True, 'Propagation': ''}]
+
+
+
+
+Config => {'Hostname': 'b07d96fea1eb', 'Domainname': '', 'User': '', 'AttachStdin': False, 'AttachStdout': False, 'AttachStderr': False, 'ExposedPorts': {'27017/tcp': {}}, 'Tty': False, 'OpenStdin': False, 'StdinOnce': False, 'Env': ['PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'GOSU_VERSION=1.11', 'JSYAML_VERSION=3.13.0', 'GPG_KEYS=9DA31620334BD75D9DCB49F368818C72E52529D4', 'MONGO_PACKAGE=mongodb-org', 'MONGO_REPO=repo.mongodb.org', 'MONGO_MAJOR=4.0', 'MONGO_VERSION=4.0.9'], 'Cmd': ['mongod'], 'ArgsEscaped': True, 'Image': 'mongo', 'Volumes': {'/data/configdb': {}, '/data/db': {}}, 'WorkingDir': '', 'Entrypoint': ['docker-entrypoint.sh'], 'OnBuild': None, 'Labels': {}}
+
+
+
+
+NetworkSettings => {'Bridge': '', 'SandboxID': 'b7716dca6cbc8c0c0cb390c420e4835bb1803e237d1deb99acf63e5f48579e26', 'HairpinMode': False, 'LinkLocalIPv6Address': '', 'LinkLocalIPv6PrefixLen': 0, 'Ports': {'27017/tcp': None}, 'SandboxKey': '/var/run/docker/netns/b7716dca6cbc', 'SecondaryIPAddresses': None, 'SecondaryIPv6Addresses': None, 'EndpointID': '1d0ed9b2f886d0559db53c787fc3292245db17cd81416d9d59f3a32b7d664841', 'Gateway': '172.17.0.1', 'GlobalIPv6Address': '', 'GlobalIPv6PrefixLen': 0, 'IPAddress': '172.17.0.2', 'IPPrefixLen': 16, 'IPv6Gateway': '', 'MacAddress': '02:42:ac:11:00:02', 'Networks': {'bridge': {'IPAMConfig': None, 'Links': None, 'Aliases': None, 'NetworkID': 'a9063df33b5e6d3e280b89e823060f110f188bca86fd325e2f1244a54d78efeb', 'EndpointID': '1d0ed9b2f886d0559db53c787fc3292245db17cd81416d9d59f3a32b7d664841', 'Gateway': '172.17.0.1', 'IPAddress': '172.17.0.2', 'IPPrefixLen': 16, 'IPv6Gateway': '', 'GlobalIPv6Address': '', 'GlobalIPv6PrefixLen': 0, 'MacAddress': '02:42:ac:11:00:02', 'DriverOpts': None}}}
