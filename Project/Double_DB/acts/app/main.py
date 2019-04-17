@@ -111,6 +111,8 @@ class Category_normal(Resource):
         return make_response(jsonify({}), 201)
 
     def head(self):
+        if(not health):
+            return ('', 500)
         return make_response(jsonify({}), 405)
 
 
