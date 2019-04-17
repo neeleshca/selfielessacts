@@ -61,10 +61,10 @@ client.containers.run('acts',ports={'80/tcp': 8080},environment={"TEAM_ID":"CC_2
 NAME  
 client.containers.run('acts',ports={'80/tcp': 8080},environment={"TEAM_ID":"CC_208_222_223_236"},name="8000_acts",detach = True)
 
-STOP  
-
-stop_signal
-client.containers.stop_signal("8000_acts")
+STOP  and REMOVE
+a = client.containers.get("8000_acts")
+a.stop()
+a.remove()
 
 
 Id => b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9
