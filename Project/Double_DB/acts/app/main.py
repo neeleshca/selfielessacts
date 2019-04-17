@@ -18,6 +18,7 @@ client = pymongo.MongoClient(database_ms,27017)
 db = client["database"]
 act = db["acts"]
 category = db["category"]
+health = True
 
 user_ms = "http://18.212.138.252:8080"
 
@@ -41,7 +42,6 @@ def getNumberOfActs(categoryName):
     number = category["category"]["count"]  # get size from the returned dictionary
     return number
 
-
 # get Acts given category
 def getActs(categoryName):
     acts = db.acts.find(
@@ -51,6 +51,8 @@ def getActs(categoryName):
 # Helper API for generating unique act ID
 @app.route("/api/v1/findactid", methods=["POST"])
 def find_actid():
+    if(not health):
+        return ('', 500)
     cursor = db.acts.find().sort("act.actId", pymongo.ASCENDING)
     id = 0
     for i in cursor:
@@ -67,6 +69,8 @@ class Category_normal(Resource):
     # API - 3
     def get(self):
         # print("Inside here\n")
+        if(not health):
+            return ('', 500)
         x = category.find({})
         dict1 = {i["category"]["name"]: i["category"]["count"] for i in x}
         if len(dict1) == 0:
@@ -78,6 +82,8 @@ class Category_normal(Resource):
 
     # API - 4
     def post(self):
+        if(not health):
+            return ('', 500)
         # print("Self",self)
         # print("Resource is ", str(Resource))
         # print("Self ifs", str(self))
@@ -112,6 +118,8 @@ class Category_delete(Resource):
 
     # API - 5
     def delete(self, del_arg):
+        if(not health):
+            return ('', 500)
         temp = category.delete_one({"category.name": del_arg})
         if temp.deleted_count == 0:
             return make_response(jsonify({}), 400)
@@ -122,6 +130,8 @@ class Category_delete(Resource):
         return make_response(jsonify({}), 200)
 
     def head(self, del_arg):
+        if(not health):
+            return ('', 500)
         return make_response(jsonify({}), 405)
 
 api.add_resource(Category_normal, "/api/v1/categories")
@@ -131,13 +141,17 @@ api.add_resource(Category_delete, "/api/v1/categories/<del_arg>")
 # API 6 and 8
 @app.route("/api/v1/categories/<categoryName>/acts", methods = ["HEAD"])
 def listActsHead(categoryName):
-	return (
+    if(not health):
+        return ('', 500)
+    return (
 		jsonify({}),
 		405
 		)
 
 @app.route("/api/v1/categories/<categoryName>/acts", methods=["GET"])
 def listActs(categoryName):
+    if(not health):
+        return ('', 500)
     number = getNumberOfActs(categoryName)  # get number of acts of the given category
 
     if number == -1:
@@ -249,14 +263,18 @@ def listActs(categoryName):
 
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["HEAD"])
 def getNumberOfActsGivenCategoryHeadError(categoryName):
-	return (
-		jsonify({}),
-		405
-		)
+    if(not health):
+        return ('', 500)
+    return (
+        jsonify({}),
+        405
+        )
 
 
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["GET"])
 def getNumberOfActsGivenCategory(categoryName):
+    if(not health):
+        return ('', 500)
     number = getNumberOfActs(categoryName)
 
     if number == -1:
@@ -270,6 +288,8 @@ def getNumberOfActsGivenCategory(categoryName):
 # API - 9
 @app.route("/api/v1/acts/upvote", methods=["POST"])
 def upvote():
+    if(not health):
+        return ('', 500)
     body = request.get_json()
     if validate_request(body, list, 1) == False:
             return jsonify({}), 400
@@ -287,6 +307,8 @@ def upvote():
 # API - 10
 @app.route("/api/v1/acts/<actId>", methods=["DELETE"])
 def removeAct(actId):
+    if(not health):
+        return ('', 500)
     body = request.get_json()
     if validate_request(body, dict, 0) == False:
             return jsonify({}), 400
@@ -305,6 +327,8 @@ def removeAct(actId):
 # API - 11
 @app.route("/api/v1/acts", methods=["POST"])
 def uploadAct():
+    if(not health):
+        return ('', 500)
     body = request.get_json()
     if validate_request(body, dict, 6) == False:
             return jsonify({}), 400
@@ -382,7 +406,21 @@ def uploadAct():
     )
     return jsonify({}), 201
 
+@app.route("/api/v1/_health", methods=["GET"])
+def returnStatus():
+    if(health):
+        return ('', 200)
+    else:
+        return ('', 500)
 
+@app.route("/api/v1/_crash", methods = ["POST"])
+def crashServer():
+    global health
+    if(not health):
+        return ('', 500)
+    else:
+        health = False
+        return ('', 200)
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5002, debug=True)
