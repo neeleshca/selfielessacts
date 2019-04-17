@@ -3,9 +3,8 @@ services:
   users:
     build: .
     ports:
-     - "8080:80"
+     - "80:80"
     networks:
-     - acts_cc-net
      - mongo-users
     container_name: users
     image: users
@@ -19,7 +18,5 @@ services:
      - mongo-users
 
 networks:
-  acts_cc-net:
-     external: true
   mongo-users:
     driver: bridge

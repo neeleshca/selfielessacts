@@ -20,7 +20,10 @@ act = db["acts"]
 category = db["category"]
 health = True
 
-user_ms = "http://18.212.138.252:8080"
+acts_http_reqs_init = db.acts_http_reqs.insert({'requests': 0})
+acts_count_init = db.acts_count.insert({'count': 0})
+
+user_ms = "http://54.210.103.126:80"
 
 app = Flask(__name__)
 api = Api(app)
@@ -42,12 +45,14 @@ def getNumberOfActs(categoryName):
     number = category["category"]["count"]  # get size from the returned dictionary
     return number
 
+
 # get Acts given category
 def getActs(categoryName):
     acts = db.acts.find(
         {"act.category": categoryName}
     )  # query for acts given the category
     return acts
+
 # Helper API for generating unique act ID
 @app.route("/api/v1/findactid", methods=["POST"])
 def find_actid():
@@ -62,15 +67,28 @@ def find_actid():
         id += 1
     return jsonify([id]), 201
 
+#increment the count for the number of http requests
+def incrementRequests():
+    db.acts_http_reqs.update({}, {'$inc': {'requests': 1}})
+    return 1
 
+#reset the http request count to zero
+def resetRequests():
+    db.acts_http_reqs.update({}, {'requests': 0})
+    return 1
+
+#increment the total number of acts
+def incrementActs():
+    db.acts_count.update({}, {'$inc': {'count': 1}})
 
 class Category_normal(Resource):
 
     # API - 3
     def get(self):
-        # print("Inside here\n")
         if(not health):
             return ('', 500)
+        incrementRequests()
+        # print("Inside here\n")
         x = category.find({})
         dict1 = {i["category"]["name"]: i["category"]["count"] for i in x}
         if len(dict1) == 0:
@@ -84,6 +102,7 @@ class Category_normal(Resource):
     def post(self):
         if(not health):
             return ('', 500)
+        incrementRequests()
         # print("Self",self)
         # print("Resource is ", str(Resource))
         # print("Self ifs", str(self))
@@ -122,6 +141,7 @@ class Category_delete(Resource):
     def delete(self, del_arg):
         if(not health):
             return ('', 500)
+        incrementRequests()
         temp = category.delete_one({"category.name": del_arg})
         if temp.deleted_count == 0:
             return make_response(jsonify({}), 400)
@@ -134,6 +154,7 @@ class Category_delete(Resource):
     def head(self, del_arg):
         if(not health):
             return ('', 500)
+        incrementRequests()
         return make_response(jsonify({}), 405)
 
 api.add_resource(Category_normal, "/api/v1/categories")
@@ -145,6 +166,7 @@ api.add_resource(Category_delete, "/api/v1/categories/<del_arg>")
 def listActsHead(categoryName):
     if(not health):
         return ('', 500)
+    incrementRequests()
     return (
 		jsonify({}),
 		405
@@ -154,6 +176,7 @@ def listActsHead(categoryName):
 def listActs(categoryName):
     if(not health):
         return ('', 500)
+    incrementRequests()
     number = getNumberOfActs(categoryName)  # get number of acts of the given category
 
     if number == -1:
@@ -267,16 +290,18 @@ def listActs(categoryName):
 def getNumberOfActsGivenCategoryHeadError(categoryName):
     if(not health):
         return ('', 500)
+    incrementRequests()
     return (
-        jsonify({}),
-        405
-        )
+		jsonify({}),
+		405
+		)
 
 
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["GET"])
 def getNumberOfActsGivenCategory(categoryName):
     if(not health):
         return ('', 500)
+    incrementRequests()
     number = getNumberOfActs(categoryName)
 
     if number == -1:
@@ -292,6 +317,7 @@ def getNumberOfActsGivenCategory(categoryName):
 def upvote():
     if(not health):
         return ('', 500)
+    incrementRequests()
     body = request.get_json()
     if validate_request(body, list, 1) == False:
             return jsonify({}), 400
@@ -311,6 +337,7 @@ def upvote():
 def removeAct(actId):
     if(not health):
         return ('', 500)
+    incrementRequests()
     body = request.get_json()
     if validate_request(body, dict, 0) == False:
             return jsonify({}), 400
@@ -331,6 +358,8 @@ def removeAct(actId):
 def uploadAct():
     if(not health):
         return ('', 500)
+    incrementRequests()
+    incrementActs()
     body = request.get_json()
     if validate_request(body, dict, 6) == False:
             return jsonify({}), 400
@@ -407,6 +436,47 @@ def uploadAct():
         {"category.name": body["categoryName"]}, {"$inc": {"category.count": 1}}
     )
     return jsonify({}), 201
+
+class HTTP_count_acts(Resource):
+
+    # API - 12
+    def get(self):
+        if(not health):
+            return ('', 500)
+        count_reqs = db.acts_http_reqs.find_one({}, {'requests': 1})
+        return make_response(json.dumps([count_reqs['requests']]), 200)
+
+    def head(self):
+        if(not health):
+            return ('', 500)
+        return make_response(json.dumps({}), 405)
+
+    def delete(self):
+        if(not health):
+            return ('', 500)
+        resetRequests()
+        return make_response(json.dumps({}), 200)
+
+api.add_resource(HTTP_count_acts, "/api/v1/_count")
+
+class count_acts(Resource):
+
+    # API - 13
+    def get(self):
+        if(not health):
+            return ('', 500)
+        incrementRequests()
+        count_acts = db.acts_count.find_one({}, {'count': 1})
+        return make_response(json.dumps([count_acts['requests']]), 200)
+
+    def head(self):
+        if(not health):
+            return ('', 500)
+        incrementRequests()
+        return make_response(json.dumps({}), 405)
+
+api.add_resource(count_acts, "/api/v1/acts/count")
+
 
 @app.route("/api/v1/_health", methods=["GET"])
 def returnStatus():

@@ -3,9 +3,8 @@ services:
   acts:
     build: .
     ports:
-     - "8000:80"
+     - "80:80"
     networks:
-     - cc-net
      - mongo-acts
     container_name: acts
     image: acts
@@ -19,7 +18,5 @@ services:
      - mongo-acts
 
 networks:
-  cc-net:
-    driver: bridge
   mongo-acts:
     driver: bridge

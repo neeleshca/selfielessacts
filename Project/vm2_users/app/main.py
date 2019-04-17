@@ -18,12 +18,22 @@ client = pymongo.MongoClient(database_ms,27017)
 db = client["database"]
 user = db["users"]
 
+users_http_reqs_init = db.users_http_reqs.insert({'requests': 0})
 
 app = Flask(__name__)
 api = Api(app)
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
 
+#increment the count for the number of http requests
+def incrementRequests():
+    db.users_http_reqs.update({}, {'$inc': {'requests': 1}})
+    return 1
+
+#reset the http request count to zero
+def resetRequests():
+    db.users_http_reqs.update({}, {'requests': 0})
+    return 1
 
 def validate_request(content, input_type, req_len):
     if isinstance(content, (input_type,)) == False:
@@ -34,6 +44,7 @@ def validate_request(content, input_type, req_len):
 class User_normal(Resource):
     # Adding an user - API 1
     def post(self):
+        incrementRequests()
         try:
             content = request.json
         except:
@@ -69,6 +80,7 @@ class User_normal(Resource):
 
     # New API - User List
     def get(self):
+        incrementRequests()
         x = user.find({})
         userlist = []
         for i in x:
@@ -78,6 +90,7 @@ class User_normal(Resource):
         return make_response(jsonify(userlist), 200)
 
     def head(self):
+        incrementRequests()
         return make_response(jsonify({}), 405)
 
 
@@ -85,6 +98,7 @@ class User_delete(Resource):
     # Adding an user - API 2
     # Removing an user - API 2
     def delete(self, del_arg):
+        incrementRequests()
         query = user.delete_one({"user.username": del_arg})
         # user does not exist to be deleted
         if query.deleted_count == 0:
@@ -92,11 +106,29 @@ class User_delete(Resource):
         return make_response(jsonify({}), 200)
 
     def head(self, del_arg):
+        incrementRequests()
         return make_response(jsonify({}), 405)
+
+class HTTP_count_users(Resource):
+
+    # Count the HTTP requests made to user - API 3
+    # Reset the HTTP requests count - API 3
+    def get(self):
+        count_reqs = db.users_http_reqs.find_one({}, {'requests': 1})
+        return make_response(jsonify([count_reqs['requests']]), 200)
+
+    def head(self):
+        return make_response(jsonify({}), 405)
+
+    def delete(self):
+        resetRequests()
+        return make_response(jsonify({}), 200)
 
 
 api.add_resource(User_normal, "/api/v1/users")
 api.add_resource(User_delete,"/api/v1/users/<del_arg>")
+api.add_resource(HTTP_count_users, "/api/v1/_count")
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001, debug=True)
