@@ -41,7 +41,8 @@ The values of the dictionary are the corresponding ports to open on the host, wh
 
 
 
-client.containers.run('acts',ports={'80/tcp': 8080},detach = True)
+
+TEAM_ID=CC_208_222_223_236
 
 NETWORK    
 
@@ -50,6 +51,20 @@ network (str) – Name of the network this container will be connected to at cre
 
 client.containers.run('acts',ports={'80/tcp': 8080},network="network1",detach = True)
 
+
+
+
+ENVIRONMENT VARIABLE
+client.containers.run('acts',ports={'80/tcp': 8080},environment={"TEAM_ID":"CC_208_222_223_236"},detach = True)
+
+
+NAME  
+client.containers.run('acts',ports={'80/tcp': 8080},environment={"TEAM_ID":"CC_208_222_223_236"},name="8000_acts",detach = True)
+
+STOP  and REMOVE
+a = client.containers.get("8000_acts")
+a.stop()
+a.remove()
 
 
 Id => b07d96fea1eb67d9b0042c2bec02cb3f30da81ffdae846063d7ad60f09e3b2b9
