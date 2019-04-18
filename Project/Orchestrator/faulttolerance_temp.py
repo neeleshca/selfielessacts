@@ -20,7 +20,7 @@ while (True):
             a = client.containers.get(iden)
             a.stop()
             a.remove()
-            b = client.containers.run('acts',ports={'80/tcp': int(port)},environment={"TEAM_ID":"CC_208_222_223_236"},name=str(port)+"_acts",detach = True)
+            b = client.containers.run('acts',ports={'80/tcp': int(port)},network="network1",environment={"TEAM_ID":"CC_208_222_223_236"},name=str(port)+"_acts",detach = True)
             portids[port] = b.id
             print("Removed identifier = " + str(iden))
             print("New identifier = " + str(b.id))
