@@ -1,3 +1,40 @@
+INSTRUCTIONS
+
+To run docker API's in a python script/shell 
+Have docker py installed 
+
+Either run the script as sudo or add docker 
+or 
+do this:
+https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user
+You won't have to use sudo before everything then 
+
+//To initialize docker object
+import docker
+client = docker.from_env()
+
+//This is to create a network so that mongo and the container can communicate
+client.networks.create("network1", driver="bridge")
+
+//This runs mongo on the above network
+client.containers.run('mongo:latest',network="network1",name="mongo_acts",detach = True)
+
+//This is to run acts container on port 8000 of host machine
+client.containers.run('acts',ports={'80/tcp': 8000},network="network1",environment={"TEAM_ID":"CC_208_222_223_236","user_ip":"18.232.141.10"},name="8000_acts",detach = True)
+
+To build the acts image,
+cd to the folder that contains the docker compose file
+docker-compose build --no-cache
+
+
+To stop and remove containers(if there is a name clash)
+docker container stop $(docker container ls -aq)
+docker container rm $(docker container ls -aq)
+
+To remove network
+docker system prune -a
+
+//END
 
 import docker
 client = docker.from_env()
