@@ -18,7 +18,8 @@ client = pymongo.MongoClient(database_ms,27017)
 db = client["database"]
 user = db["users"]
 
-users_http_reqs_init = db.users_http_reqs.insert({'requests': 0})
+# users_http_reqs_init = db.users_http_reqs.insert({'requests': 0})
+users_http_reqs = 0
 
 app = Flask(__name__)
 api = Api(app)
@@ -27,12 +28,16 @@ PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
 #increment the count for the number of http requests
 def incrementRequests():
-    db.users_http_reqs.update({}, {'$inc': {'requests': 1}})
+    # db.users_http_reqs.update({}, {'$inc': {'requests': 1}})
+    global users_http_reqs
+    users_http_reqs += 1
     return 1
 
 #reset the http request count to zero
 def resetRequests():
-    db.users_http_reqs.update({}, {'requests': 0})
+    # db.users_http_reqs.update({}, {'requests': 0})
+    global users_http_reqs
+    users_http_reqs = 0
     return 1
 
 def validate_request(content, input_type, req_len):
@@ -114,8 +119,9 @@ class HTTP_count_users(Resource):
     # Count the HTTP requests made to user - API 3
     # Reset the HTTP requests count - API 3
     def get(self):
-        count_reqs = db.users_http_reqs.find_one({}, {'requests': 1})
-        return make_response(jsonify([count_reqs['requests']]), 200)
+        # count_reqs = db.users_http_reqs.find_one({}, {'requests': 1})
+        global users_http_reqs
+        return make_response(jsonify([users_http_reqs]), 200)
 
     def head(self):
         return make_response(jsonify({}), 405)
