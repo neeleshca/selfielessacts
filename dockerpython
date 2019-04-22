@@ -36,6 +36,9 @@ docker system prune -a
 
 //END
 
+lsof -i :7000
+gunicorn -b 127.0.0.1:7000 --env FOO=1 helloworld:app
+
 import docker
 client = docker.from_env()
 client.containers.run('mongo',detach = True)
