@@ -14,6 +14,7 @@ portIds = dict()
 
 numberOfHTTPRequests = 0
 numberOfRunningContainers = 1
+curr_container = -1
 
 
 def healthCheck():
@@ -111,6 +112,25 @@ def api3():
     numberOfHTTPRequests+=1
     return "Request 345"
 
+
+
+@app.route('/api/v1/<route>', methods = ["GET", "POST", "DELETE"])
+def handleRequest(route):
+    global curr_container
+    curr_container = (curr_container + 1) % numberOfRunningContainers
+    path = "http://127.0.0.1:800" +  str(curr_container) + "/api/v1/" + str(route)
+    print("Path:" + path)
+    if request.method == "GET":
+        resp = requests.get(url = path, json = request.get_json())
+    elif request.method == "POST":
+        resp = requests.post(url = path, json = request.get_json())
+    else:
+        resp = requests.delete(url = path)
+    print(resp.content)
+    if(len(resp.content)==0):
+        return '',resp.status_code
+    else:
+        return jsonify(resp.get_json()),resp.status_code
 startOrchestrator()
 if __name__ == "__main__":
     app.run(debug = True)
