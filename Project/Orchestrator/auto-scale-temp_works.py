@@ -25,7 +25,7 @@ def healthCheck():
         a = client.containers.get(oldId)
         a.stop()
         a.remove()
-        b = client.containers.run('acts',ports={'80/tcp': int(samePort)},network="network1",environment={"TEAM_ID":"CC_208_222_223_236"},name=str(samePort)+"_acts",detach = True)
+        b = client.containers.run('acts',ports={'80/tcp': int(samePort)},network="network1",environment={"TEAM_ID":"CC_208_222_223_236","user_ip":"18.232.141.10"},name=str(samePort)+"_acts", detach = True)
         portIds[samePort] = b.id
         print("Removed identifier = "+str(oldId))
         print("New identifier = "+str(b.id))
@@ -50,6 +50,20 @@ def healthCheck():
                 containerCreateThread.start()
         time.sleep(1) 
 
+def startContainer(port_no):
+    global portIds
+    client = docker.from_env()
+    b = client.containers.run('acts',ports={'80/tcp': int(port_no)},network="network1",environment={"TEAM_ID":"CC_208_222_223_236", "user_ip":"18.232.141.10"},name=str(port_no)+"_acts", detach = True)
+    portIds[str(port_no)] = b.id
+
+def stopContainer(portId):
+    global portIds
+    del portIds[str(portId)]
+    client = docker.from_env()
+    a = client.containers.get(portIds[str(portId)])
+    a.stop()
+    a.remove()
+
 def autoScaler():
     global numberOfHTTPRequests
     global numberOfRunningContainers
@@ -67,17 +81,13 @@ def autoScaler():
             print("Scaling up") # SCALE UP
             for i in range(0,newNumberOfContainers):
                 if(str(8000+i) not in portIds):
-                    b = client.containers.run('acts',ports={'80/tcp': 8000+i},network="network1",environment={"TEAM_ID":"CC_208_222_223_236"},name=str(8000+i)+"_acts",detach = True)
-                    portIds[str(8000+i)] = b.id
+                    startContainer(8000 + i)
             numberOfRunningContainers = newNumberOfContainers
         elif(newNumberOfContainers < numberOfRunningContainers):
             print("stopping "+str(numberOfRunningContainers - newNumberOfContainers)+" containers")
             print("Scaling down") #SCALE DOWN
             for i in range(numberOfRunningContainers-1,newNumberOfContainers-1,-1):
-                a = client.containers.get(portIds[str(8000+i)])
-                a.stop()
-                a.remove()
-                del portIds[str(8000+i)]
+                stopContainer(8000+i)
             numberOfRunningContainers = newNumberOfContainers
         else:
             print("Still the same")
@@ -116,6 +126,8 @@ def api3():
 
 @app.route('/api/v1/<route>', methods = ["GET", "POST", "DELETE"])
 def handleRequest(route):
+    global numberOfHTTPRequests
+    numberOfHTTPRequests+=1
     global curr_container
     curr_container = (curr_container + 1) % numberOfRunningContainers
     path = "http://127.0.0.1:800" +  str(curr_container) + "/api/v1/" + str(route)
@@ -125,7 +137,7 @@ def handleRequest(route):
     elif request.method == "POST":
         resp = requests.post(url = path, json = request.get_json())
     else:
-        resp = requests.delete(url = path)
+        resp = requests.delete(url = path,  json = request.get_json())
     print(resp.content)
     if(len(resp.content)==0):
         return '',resp.status_code
