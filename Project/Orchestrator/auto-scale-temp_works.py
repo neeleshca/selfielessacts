@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,request,jsonify
 import threading
 import time
 
@@ -121,7 +121,7 @@ def handleRequest(route):
     path = "http://127.0.0.1:800" +  str(curr_container) + "/api/v1/" + str(route)
     print("Path:" + path)
     if request.method == "GET":
-        resp = requests.get(url = path, json = request.get_json())
+        resp = requests.get(url = path)
     elif request.method == "POST":
         resp = requests.post(url = path, json = request.get_json())
     else:
@@ -130,7 +130,7 @@ def handleRequest(route):
     if(len(resp.content)==0):
         return '',resp.status_code
     else:
-        return jsonify(resp.get_json()),resp.status_code
+        return jsonify(resp.json()),resp.status_code
 startOrchestrator()
 if __name__ == "__main__":
     app.run(debug = True)
