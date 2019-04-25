@@ -1,3 +1,4 @@
+
 from flask import Flask,request,jsonify
 import threading
 import time
@@ -58,9 +59,9 @@ def startContainer(port_no):
 
 def stopContainer(portId):
     global portIds
-    del portIds[str(portId)]
     client = docker.from_env()
     a = client.containers.get(portIds[str(portId)])
+    del portIds[str(portId)]
     a.stop()
     a.remove()
 
@@ -73,6 +74,7 @@ def autoScaler():
     while(numberOfHTTPRequests == 0):
         pass
     while(True):
+        time.sleep(120)
         print("number of http requests = "+str(numberOfHTTPRequests))
         newNumberOfContainers = int(numberOfHTTPRequests / 20) + 1
         print("number of containers = "+str(newNumberOfContainers))
@@ -92,57 +94,58 @@ def autoScaler():
         else:
             print("Still the same")
         numberOfHTTPRequests = 0
-        time.sleep(120)
 
 
 def startOrchestrator():
     healthCheckThread = threading.Thread(target = healthCheck)
     autoScalerThread = threading.Thread(target = autoScaler)
+    apiHandlerThread = threading.Thread(target = api_handle)
     healthCheckThread.start()
     autoScalerThread.start()
+    apiHandlerThread.start()
 
-@app.route("/request1",methods=["GET"])
-def api1():
-    global numberOfHTTPRequests
-    numberOfHTTPRequests+=1
-    print("Request 1") 
-    return "Request 123"
+def api_handle():
+    print("hello")   
+    @app.route('/api/v1/<route>', methods = ["GET", "POST", "DELETE"])
+    def handleRequest(route):
+        global numberOfHTTPRequests
+        numberOfHTTPRequests+=1
+        global curr_container
+        curr_container = (curr_container + 1) % numberOfRunningContainers
+        path = "http://127.0.0.1:800" +  str(curr_container) + "/api/v1/" + str(route)
+        print("Path:" + path)
+        if request.method == "GET":
+            resp = requests.get(url = path)
+        elif request.method == "POST":
+            resp = requests.post(url = path, json = request.get_json())
+        else:
+            resp = requests.delete(url = path,  json = request.get_json())
+        print(resp.content)
+        if(len(resp.content)==0):
+            return '',resp.status_code
+        else:
+            return jsonify(resp.json()),resp.status_code
+    @app.route("/request1",methods=["GET"])
+    def api1():
+        global numberOfHTTPRequests
+        numberOfHTTPRequests+=1
+        print("Request 1") 
+        return "Request 123"
     
 
-@app.route("/request2")
-def api2():
-    global numberOfHTTPRequests
-    numberOfHTTPRequests+=1
-    return "Request 245"
+    @app.route("/request2")
+    def api2():
+        global numberOfHTTPRequests
+        numberOfHTTPRequests+=1
+        return "Request 245"
 
 
-@app.route("/request3")
-def api3():
-    global numberOfHTTPRequests
-    numberOfHTTPRequests+=1
-    return "Request 345"
+    @app.route("/request3")
+    def api3():
+        global numberOfHTTPRequests
+        numberOfHTTPRequests+=1
+        return "Request 345"
 
 
-
-@app.route('/api/v1/<route>', methods = ["GET", "POST", "DELETE"])
-def handleRequest(route):
-    global numberOfHTTPRequests
-    numberOfHTTPRequests+=1
-    global curr_container
-    curr_container = (curr_container + 1) % numberOfRunningContainers
-    path = "http://127.0.0.1:800" +  str(curr_container) + "/api/v1/" + str(route)
-    print("Path:" + path)
-    if request.method == "GET":
-        resp = requests.get(url = path)
-    elif request.method == "POST":
-        resp = requests.post(url = path, json = request.get_json())
-    else:
-        resp = requests.delete(url = path,  json = request.get_json())
-    print(resp.content)
-    if(len(resp.content)==0):
-        return '',resp.status_code
-    else:
-        return jsonify(resp.json()),resp.status_code
+    app.run()
 startOrchestrator()
-if __name__ == "__main__":
-    app.run(debug = True)
