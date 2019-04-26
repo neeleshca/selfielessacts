@@ -1,0 +1,8 @@
+{
+    "CC_208_222_223_236": {
+        "selfieless_ip": "lbproj-693327738.us-east-1.elb.amazonaws.com",
+        "acts_ip": "3.87.109.23",
+        "acts_username": "ubuntu",
+        "acts_private_key": "ec2pes.pem"
+    }
+}
