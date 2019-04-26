@@ -39,6 +39,8 @@ docker system prune -a
 lsof -i :7000
 gunicorn -b 127.0.0.1:7000 --env FOO=1 helloworld:app
 gunicorn -b 127.0.0.1:7000 --env FOO=1 auto-scale-temp:app
+gunicorn -b 127.0.0.1:7000 --env FOO=1 Auto-scale:app
+
 
 import docker
 client = docker.from_env()
