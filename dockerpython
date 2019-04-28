@@ -40,6 +40,7 @@ lsof -i :7000
 gunicorn -b 127.0.0.1:7000 --env FOO=1 helloworld:app
 gunicorn -b 127.0.0.1:7000 --env FOO=1 auto-scale-temp:app
 gunicorn -b 127.0.0.1:7000 --env FOO=1 Auto-scale:app
+gunicorn -b 127.0.0.1:7000 --env FOO=1 Auto-scale:app --daemon
 
 There's a script1.sh in the Orchestrator folder, use for removing the containers and networks. If something fucks up (even thought it probably won't now, use that)
 yes | ./script1.sh
@@ -66,6 +67,9 @@ exit
 Then, run mongoexport command in the shell (not in mongo):
 
 mongoexport -d <database-name> -c <collection-name> --out output.json
+mongoexport -d database -c acts --out acts.json
+mongoexport -d database -c category --out category.json
+
 
 Then, on your local machine, copy the file from inside the docker container to your current folder:
 
