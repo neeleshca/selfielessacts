@@ -1,0 +1,29 @@
+<root>
+    <microservice>
+        <image>acts</image>
+        <min>1</min>
+        <max>10</max>
+        <time>120</time>
+        <numberofrequests>20</numberofrequests>
+        <port>{'80/tcp':8000}</port>
+        <network>network1</network>
+        <prefixurl>/api/v1</prefixurl>
+        <environment>{"TEAM_ID":"CC_208_222_223_236","user_ip":"54.173.162.32"}</environment>
+        <name>acts1</name>
+    </microservice>
+
+    <microservice>
+        <image>mongo:latest</image>
+        <min>1</min>
+        <max>1</max>
+        <time>100000</time>
+        <numberofrequests>30</numberofrequests>
+        <port>{'27017/tcp':None}</port>
+        <network>network1</network>
+        <prefixurl>/a/v1/xyz/asd/qwe</prefixurl>
+        <environment>{"TEAM_ID":"CC_208_222_223_236","user_ip":"54.173.162.32"}</environment>
+        <name>mongo</name>
+    </microservice>
+
+
+</root>  

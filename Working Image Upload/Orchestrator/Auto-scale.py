@@ -115,7 +115,7 @@ def api_handle():
         numberOfHTTPRequests+=1
         global curr_container
         curr_container = (curr_container + 1) % numberOfRunningContainers
-	print("Path is ",path)
+        print("Path is ",path)
         path = "http://127.0.0.1:800" +  str(curr_container) +"/api/v1/"+ str(path)
         print("Path:" + path)
         if request.method == "GET":
