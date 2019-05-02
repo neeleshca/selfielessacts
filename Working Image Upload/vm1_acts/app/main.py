@@ -13,30 +13,44 @@ import datetime
 from datetime import datetime
 import requests
 
+#Nameof MongoDB container
 database_ms = "mongo"
 client = pymongo.MongoClient(database_ms,27017)
 print(client)
+
+#Database that has all the collections
 db = client["database"]
+#Acts collections
 act = db["acts"]
+#Category collections
 category = db["category"]
+#Container health global variable
 health = True
 
+#Counter for http requests
 acts_http_reqs_init = db.acts_http_reqs.insert({'requests': 0})
+#Counter for acts
 acts_count_init = db.acts_count.insert({'count': 0})
 
 #user_ms = "http://"+"54.210.103.126"+":80"
+
+#gets IP of User VM through environment variable
 user_ms = "http://"+os.getenv("user_ip","0.0.0.0") + ":80"
 print("User ms ",user_ms)
 app = Flask(__name__)
 api = Api(app)
+
+#Used previously
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
+#Sees if request is of proper type and length.
 def validate_request(content, input_type, req_len):
     if isinstance(content, (input_type,)) == False:
         return False
     if len(content) != req_len:
         return False
 
+#Returns number of acts for a given category
 def getNumberOfActs(categoryName):
     category = db.category.find_one(
         {"category.name": categoryName}
@@ -56,6 +70,7 @@ def getActs(categoryName):
     return acts
 
 # Helper API for generating unique act ID
+# (Used in previous assignment, now the app is generating this)
 @app.route("/api/v1/findactid", methods=["POST"])
 def find_actid():
     if(not health):
@@ -86,28 +101,23 @@ def incrementActs():
 class Category_normal(Resource):
 
     # API - 3
+    #Lists all categories
     def get(self):
         if(not health):
             return ('', 500)
         incrementRequests()
-        # print("Inside here\n")
         x = category.find({})
         dict1 = {i["category"]["name"]: i["category"]["count"] for i in x}
         if len(dict1) == 0:
             return make_response('', 204)
-        # response = app.response_class(
-        #     response=json.dumps(y), mimetype='application/json')
-        # return jsonify(dict1)
         return make_response(jsonify(dict1), 200)
 
     # API - 4
+    #Adds a category
     def post(self):
         if(not health):
             return ('', 500)
         incrementRequests()
-        # print("Self",self)
-        # print("Resource is ", str(Resource))
-        # print("Self ifs", str(self))
         try:
             content = request.json
         except:
@@ -131,6 +141,7 @@ class Category_normal(Resource):
         category.insert(dict_temp)
         return make_response(jsonify({}), 201)
 
+    #Explicity handle head requests as 405
     def head(self):
         if(not health):
             return ('', 500)
@@ -140,6 +151,7 @@ class Category_normal(Resource):
 class Category_delete(Resource):
 
     # API - 5
+    #Deletes a category
     def delete(self, del_arg):
         if(not health):
             return ('', 500)
@@ -150,9 +162,10 @@ class Category_delete(Resource):
 
         #Deleting corresponding acts from act table    
         act.delete_many({"act.category": del_arg})
-        # print(xyz)
         return make_response(jsonify({}), 200)
 
+
+    #Explicity handle head requests as 405
     def head(self, del_arg):
         if(not health):
             return ('', 500)
@@ -164,6 +177,7 @@ api.add_resource(Category_delete, "/api/v1/categories/<del_arg>")
 
 
 # API 6 and 8
+#Explicity handle head requests as 405
 @app.route("/api/v1/categories/<categoryName>/acts", methods = ["HEAD"])
 def listActsHead(categoryName):
     if(not health):
@@ -174,6 +188,8 @@ def listActsHead(categoryName):
 		405
 		)
 
+#List acts for a given category (when total #acts is less than 100) and
+# Return number of acts for a given category in a given range (inclusive) (This is done through request args get start and end)
 @app.route("/api/v1/categories/<categoryName>/acts", methods=["GET"])
 def listActs(categoryName):
     if(not health):
@@ -250,11 +266,13 @@ def listActs(categoryName):
         ) # sort in descending order of timestamp (latest first)
 
         tempList = []
+        #Corresponding acts are stored in actsList
         actsList = []
         for i in acts:  # since acts object is not indexable, create a tempList
             tempList.append(i)
         print(tempList)
         
+        #Corner cases, invalid start and end range.
         if startRange < 1:
             return jsonify({}), 405
 
@@ -287,7 +305,7 @@ def listActs(categoryName):
 
 
 # API - 7
-
+#Explicit handling of head
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["HEAD"])
 def getNumberOfActsGivenCategoryHeadError(categoryName):
     if(not health):
@@ -299,6 +317,7 @@ def getNumberOfActsGivenCategoryHeadError(categoryName):
 		)
 
 
+#List number of acts for a given category
 @app.route("/api/v1/categories/<categoryName>/acts/size", methods=["GET"])
 def getNumberOfActsGivenCategory(categoryName):
     if(not health):
@@ -315,6 +334,7 @@ def getNumberOfActsGivenCategory(categoryName):
 
 
 # API - 9
+#Upvote an act
 @app.route("/api/v1/acts/upvote", methods=["POST"])
 def upvote():
     if(not health):
@@ -335,6 +355,7 @@ def upvote():
 
 
 # API - 10
+#Remove an act
 @app.route("/api/v1/acts/<actId>", methods=["DELETE"])
 def removeAct(actId):
     if(not health):
@@ -348,6 +369,7 @@ def removeAct(actId):
         print("Act Does Not Exist!")
         return jsonify({}), 400
 
+    #Subtracts category by one.
     db.category.update_one(
         {"category.name": query["act"]["category"]}, {"$inc": {"category.count": -1}}
     )
@@ -355,6 +377,7 @@ def removeAct(actId):
     return jsonify({}), 200
 
 
+#Uploading an act
 # API - 11
 @app.route("/api/v1/acts", methods=["POST"])
 def uploadAct():
@@ -363,6 +386,7 @@ def uploadAct():
     incrementRequests()
     incrementActs()
     body = request.get_json()
+    #Validation of request
     if validate_request(body, dict, 6) == False:
             return jsonify({}), 400
     validate_set = {"actId", "username", "timestamp", "caption", "categoryName", "imgB64"}
@@ -388,6 +412,7 @@ def uploadAct():
         print("ActID already Exists!")
         return jsonify({}), 400
 
+    #Making sure time is in proper format
     try:
         a = datetime.strptime(body["timestamp"], "%d-%m-%Y:%S-%M-%H")
     except:
@@ -397,7 +422,8 @@ def uploadAct():
     print(body["username"])
     resp = requests.get(url=user_ms + '/api/v1/users')
     list_users = resp.json()
-
+    
+    #Ensuring valid user
     flag = 0
     for i in list_users:
         if i == body["username"]:
@@ -407,6 +433,7 @@ def uploadAct():
         print("User does not exist!")
         return jsonify({}), 400
 
+    #Ensuring valid base64 string
     try:
         base64.b64decode(body["imgB64"])
     except:
@@ -439,6 +466,7 @@ def uploadAct():
     )
     return jsonify({}), 201
 
+#Returns number of http requests
 class HTTP_count_acts(Resource):
 
     # API - 12
@@ -461,6 +489,8 @@ class HTTP_count_acts(Resource):
 
 api.add_resource(HTTP_count_acts, "/api/v1/_count")
 
+
+#Returns number of acts
 class count_acts(Resource):
 
     # API - 13
@@ -480,6 +510,7 @@ class count_acts(Resource):
 api.add_resource(count_acts, "/api/v1/acts/count")
 
 
+#Health check
 @app.route("/api/v1/_health", methods=["GET"])
 def returnStatus():
     if(health):
@@ -487,6 +518,7 @@ def returnStatus():
     else:
         return ('', 500)
 
+#Crashes container
 @app.route("/api/v1/_crash", methods = ["POST"])
 def crashServer():
     global health

@@ -12,16 +12,21 @@ import re
 import datetime
 from datetime import datetime
 
+#Name of MongoDB container
 database_ms = "mongo"
 client = pymongo.MongoClient(database_ms,27017)
 
+#database which stores users
 db = client["database"]
+#Collections which has user information
 user = db["users"]
 
+#Counter for http requests
 users_http_reqs_init = db.users_http_reqs.insert({'requests': 0})
 
 app = Flask(__name__)
 api = Api(app)
+#Used previously
 PATH = abspath(getsourcefile(lambda: 0)).rsplit("/", 1)[0]
 
 
@@ -35,6 +40,7 @@ def resetRequests():
     db.users_http_reqs.update({}, {'requests': 0})
     return 1
 
+#Sees if request is of proper type and length.
 def validate_request(content, input_type, req_len):
     if isinstance(content, (input_type,)) == False:
         return False
@@ -45,6 +51,7 @@ class User_normal(Resource):
     # Adding an user - API 1
     def post(self):
         incrementRequests()
+        #Validates fields
         try:
             content = request.json
         except:
@@ -68,6 +75,7 @@ class User_normal(Resource):
         if query is not None:
             return make_response(jsonify({}), 400)
 
+        #Sees if password is a SHA1 hex.
         regex = re.compile("^[a-fA-F0-9]{40}$")
         if not (regex.match(content["password"])):
             return make_response(jsonify({}), 400)
@@ -79,6 +87,7 @@ class User_normal(Resource):
         return make_response(jsonify({}), 201)
 
     # New API - User List
+    #List all users
     def get(self):
         incrementRequests()
         x = user.find({})
@@ -89,13 +98,13 @@ class User_normal(Resource):
             return make_response('', 204)
         return make_response(jsonify(userlist), 200)
 
+    #Explicitly handle head
     def head(self):
         incrementRequests()
         return make_response(jsonify({}), 405)
 
 
 class User_delete(Resource):
-    # Adding an user - API 2
     # Removing an user - API 2
     def delete(self, del_arg):
         incrementRequests()
@@ -105,14 +114,15 @@ class User_delete(Resource):
             return make_response(jsonify({}), 400)
         return make_response(jsonify({}), 200)
 
+    #Explicitly handle head
     def head(self, del_arg):
         incrementRequests()
         return make_response(jsonify({}), 405)
 
 class HTTP_count_users(Resource):
 
-    # Count the HTTP requests made to user - API 3
-    # Reset the HTTP requests count - API 3
+    # Count the HTTP requests made to user 
+    # Reset the HTTP requests count
     def get(self):
         count_reqs = db.users_http_reqs.find_one({}, {'requests': 1})
         return make_response(jsonify([count_reqs['requests']]), 200)
